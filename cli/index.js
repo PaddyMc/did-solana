@@ -3,12 +3,38 @@ const lo = require("buffer-layout");
 
 const createDid = async (connection, programId) => {
   const lamports = 10 * 1000000000;
-  const numBytes = 5;
 
   const account = new solana_web3.Account();
   await connection.requestAirdrop(account.publicKey, lamports);
 
   const dataAccount = new solana_web3.Account();
+
+  const dataLayout = lo.struct([
+    lo.u8("instruction"),
+    lo.cstr("context"),
+    lo.cstr("id"),
+    lo.cstr("aka"),
+    lo.u8("services"),
+  ]);
+  const numBytes = 1 + 32 + 32 + 32 + (32*10) + 1;
+  console.log(numBytes)
+  const data = Buffer.alloc(numBytes);
+//  console.log(dataAccount.publicKey.toString())
+//  console.log(Buffer.byteLength(Buffer.from(`did:sol${dataAccount.publicKey.toString()}`.substring(0,31))))
+//  console.log(Buffer.byteLength(Buffer.from(`Paddy`.padEnd(32).substring(0,31))))
+//  console.log(Buffer.byteLength(Buffer.from(`Paddy`.padEnd(32).substring(0,31))))
+  dataLayout.encode(
+    {
+      instruction: 0, // InitializeCreateDid instruction
+      context: Buffer.from("https://w3c.github.io/did-core/"),
+      id: Buffer.from(`did:sol:${dataAccount.publicKey.toString()}`.substring(0, 31)),
+      aka: Buffer.from(`Paddy`.padEnd(32).substring(0,31)),
+      services: 5,
+    },
+    data
+  );
+  console.log(data)
+  console.log(numBytes)
 
   const rentExemption = await connection.getMinimumBalanceForRentExemption(
     numBytes
@@ -24,36 +50,6 @@ const createDid = async (connection, programId) => {
       programId: programId,
     })
   );
- 
-
-
-const ds = lo.cstr();
-const b = Buffer.alloc(8);
-console.log(ds.encode('hi!', b) === 3 + 1);
-const slen = ds.getSpan(b);
-console.log(slen)
-
-  const dataLayout = lo.struct([
-    lo.u8("instruction"),
-    lo.u8("context"),
-    lo.u8("id"),
-    lo.u8("aka"),
-    lo.u8("authentication"),
-    lo.u8("services"),
-  ]);
-  const data = Buffer.alloc(dataLayout.span);
-  dataLayout.encode(
-    {
-      instruction: 0, // InitializeCreateDid instruction
-      context: 1,
-      id: 2,
-      aka: 3,
-      authentication: 4,
-      services: 5,
-    },
-    data
-  );
-  console.log(data)
 
   const instruction = new solana_web3.TransactionInstruction({
     keys: [
@@ -74,16 +70,15 @@ console.log(slen)
 
   transaction.add(instruction);
 
-  const result = await solana_web3
-    .sendAndConfirmTransaction(
-      connection,
-      transaction,
-      [account, dataAccount],
-      {
-        confirmations: 1,
-        skipPreflight: true,
-      }
-    )
+  const result = await solana_web3.sendAndConfirmTransaction(
+    connection,
+    transaction,
+    [account, dataAccount],
+    {
+      confirmations: 1,
+      skipPreflight: true,
+    }
+  );
 
   await getAccountInfo(connection, dataAccount.publicKey);
 };
@@ -102,19 +97,33 @@ const getAccountInfo = async (connection, pk) => {
     console.log("Account not found on chain");
     process.exit(1);
   }
-  console.log(account);
+  decodeDid(account.data);
 
   let owner = new solana_web3.PublicKey(account.owner._bn);
 
   console.log("Owner PubKey:", owner.toString());
 };
 
+const decodeDid = (buf) => {
+  console.log(buf)
+  const dataLayout = lo.struct([
+    lo.cstr("context"),
+    lo.cstr("id"),
+    lo.cstr("aka"),
+    lo.blob(320, "authentication"),
+    lo.u8("services"),
+  ]);
+  let data = dataLayout.decode(
+    buf
+  );
+  console.log(data)
+}
+
 const main = async () => {
   connection = new solana_web3.Connection(
     "http://localhost:8899",
     "singleGossip"
   );
-  console.log(process.argv[2]);
   let programId = new solana_web3.PublicKey(process.argv[2]);
 
   await createDid(connection, programId);

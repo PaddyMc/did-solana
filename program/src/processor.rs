@@ -9,6 +9,15 @@ use solana_program::{
     program_pack::{Pack, Sealed},
     pubkey::Pubkey,
 };
+use std::convert::TryInto;
+
+/// max amount of authentications that can be added
+/// to a did document
+pub const MAX_AUTH: usize = 10;
+
+///
+/// Processor
+///
 
 /// Instruction processor
 pub fn process_instruction(
@@ -23,17 +32,13 @@ pub fn process_instruction(
             context,
             id,
             aka,
-            authentication,
             services,
-        } => create_did(
-            program_id,
-            accounts,
-            context,
-            id,
-            aka,
-            authentication,
-            services,
-        ),
+        } => {
+            msg!(std::str::from_utf8(&context).unwrap());
+            msg!(std::str::from_utf8(&id).unwrap());
+            msg!(std::str::from_utf8(&aka).unwrap());
+            create_did(program_id, accounts, context, id, aka, services)
+        }
     }
 }
 
@@ -41,27 +46,21 @@ pub fn process_instruction(
 pub fn create_did(
     _: &Pubkey,
     accounts: &[AccountInfo],
-    context: u8,
-    id: u8,
-    aka: u8,
-    authentication: u8,
+    context: [u8; 32],
+    id: [u8; 32],
+    aka: [u8; 32],
     services: u8,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
-    let _ = next_account_info(account_info_iter)?;
+    let account = next_account_info(account_info_iter)?;
     let did_info = next_account_info(account_info_iter)?;
-    did_info.key.log();
     msg!("Creating: Did");
-    //let mut did = DidDocument::unpack_unchecked(&did_info.data.borrow())?;
-
-    let did = DidDocument {
-        context,
-        id,
-        aka,
-        authentication,
-        services,
-    };
-    msg!("Updating account data");
+    let mut did = DidDocument::unpack_unchecked(&did_info.data.borrow())?;
+    did.context = context;
+    did.id = id;
+    did.aka = aka;
+    did.authentication[0] = *account.key;
+    did.services = services;
 
     msg!("Updating account data");
     DidDocument::pack(did, &mut did_info.data.borrow_mut())?;
@@ -82,13 +81,13 @@ pub enum DidInstruction {
     /// Initilaizes a new Did
     CreateDid {
         /// context refers to the url of the w3c spec
-        context: u8,
+        context: [u8; 32],
         /// id refers to the id of the did document
-        id: u8,
+        id: [u8; 32],
         /// aka is used for vanity names for associated public keys
-        aka: u8,
+        aka: [u8; 32],
         /// authentication is a list of public keys associated with a did document
-        authentication: u8,
+        //authentication: Pubkey,
         /// services represent ways to get data about the did subject
         services: u8,
     },
@@ -101,18 +100,20 @@ impl DidInstruction {
         let (tag, rest) = input.split_first().ok_or(InvalidArgument)?;
         Ok(match &tag {
             0 => {
-                sol_log("Decoding instruction_data");
-                msg!(std::str::from_utf8(rest).unwrap());
-                let (&context, _rest) = rest.split_first().ok_or(InvalidArgument)?;
-                let (&id, _rest) = _rest.split_first().ok_or(InvalidArgument)?;
-                let (&aka, _rest) = _rest.split_first().ok_or(InvalidArgument)?;
-                let (&authentication, _rest) = _rest.split_first().ok_or(InvalidArgument)?;
+                sol_log("Decoding CreateDid instruction_data");
+                let (context, _rest) = rest.split_at(32);
+                let (id, _rest) = _rest.split_at(32);
+                let (aka, _rest) = _rest.split_at(32);
+
+                //let (&authentication, _rest) = _rest.split_first().ok_or(InvalidArgument)?;
                 let (&services, _rest) = _rest.split_first().ok_or(InvalidArgument)?;
+                let context = cast_slice_as_array(context);
+                let id = cast_slice_as_array(id);
+                let aka = cast_slice_as_array(aka);
                 Self::CreateDid {
                     context,
                     id,
                     aka,
-                    authentication,
                     services,
                 }
             }
@@ -183,43 +184,52 @@ impl DidInstruction {
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct DidDocument {
     /// context refers to the url of the w3c spec
-    context: u8,
+    context: [u8; 32],
     /// id refers to the id of the did document
-    id: u8,
+    id: [u8; 32],
     /// aka is used for vanity names for associated public keys
-    aka: u8,
+    aka: [u8; 32],
     /// authentication is a list of public keys associated with a did document
-    authentication: u8,
+    authentication: [Pubkey; MAX_AUTH],
     /// services represent ways to get data about the did subject
     services: u8,
 }
 impl Sealed for DidDocument {}
 impl Pack for DidDocument {
-    const LEN: usize = 5;
+    const LEN: usize = 418;
     fn unpack_from_slice(src: &[u8]) -> Result<Self, ProgramError> {
-        let src = array_ref![src, 0, 5];
+        let src = array_ref![src, 0, 417];
         //let (context, authentication, services) = array_refs![src, 1, 36, 1];
-        let (context, id, aka, authentication, services) = array_refs![src, 1, 1, 1, 1, 1];
-        let context = context[0];
-        let id = id[0];
-        let aka = aka[0];
-        let authentication = authentication[0];
+        let (context, id, aka, authentication_flat, services) =
+            array_refs![src, 32, 32, 32, 32 * MAX_AUTH, 1];
+        let context = cast_slice_as_array(context);
+        let id = cast_slice_as_array(id);
+        let aka = cast_slice_as_array(aka);
+        let authentication = [Pubkey::new_from_array([0u8; 32]); MAX_AUTH];
         let services = services[0];
-
-        //    let authentication = unpack_coption_key(authentication)?;
-        Ok(DidDocument {
+        let mut result = DidDocument {
             context,
             id,
             aka,
             authentication,
             services,
-        })
+        };
+
+        for (src, dst) in authentication_flat
+            .chunks(32)
+            .zip(result.authentication.iter_mut())
+        {
+            *dst = Pubkey::new(src);
+        }
+
+        //    let authentication = unpack_coption_key(authentication)?;
+        Ok(result)
     }
 
     fn pack_into_slice(&self, dst: &mut [u8]) {
-        let dst = array_mut_ref![dst, 0, 5];
-        let (context_dst, id_dst, aka_dst, authentication_dst, services_dst) =
-            mut_array_refs![dst, 1, 1, 1, 1, 1];
+        let dst = array_mut_ref![dst, 0, 417];
+        let (context_dst, id_dst, aka_dst, authentication_flat, services_dst) =
+            mut_array_refs![dst, 32, 32, 32, 32 * MAX_AUTH, 1];
         let &DidDocument {
             context,
             id,
@@ -228,13 +238,20 @@ impl Pack for DidDocument {
             services,
         } = self;
         sol_log("Packing did document into account_data");
-        //pack_coption_key(authentication_dst, authentication);
-        context_dst[0] = context;
-        id_dst[0] = id;
-        aka_dst[0] = aka;
-        authentication_dst[0] = authentication;
+        *context_dst = context;
+        *id_dst = id;
+        *aka_dst = aka;
+        for (i, src) in self.authentication.iter().enumerate() {
+            let dst_array = array_mut_ref![authentication_flat, 32 * i, 32];
+            dst_array.copy_from_slice(src.as_ref());
+        }
+
         services_dst[0] = services;
     }
+}
+
+fn cast_slice_as_array(input: &[u8]) -> [u8; 32] {
+    input.try_into().expect("slice with incorrect length")
 }
 
 // Helpers
