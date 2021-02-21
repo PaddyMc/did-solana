@@ -1,4 +1,5 @@
 /target
 /program/target
 /cli/node_modules
+/frontend/node_modules
 *.swp

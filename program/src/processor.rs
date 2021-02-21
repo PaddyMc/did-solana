@@ -33,12 +33,9 @@ pub fn process_instruction(
             id,
             aka,
             services,
-        } => {
-            msg!(std::str::from_utf8(&context).unwrap());
-            msg!(std::str::from_utf8(&id).unwrap());
-            msg!(std::str::from_utf8(&aka).unwrap());
-            create_did(program_id, accounts, context, id, aka, services)
-        }
+        } => create_did(program_id, accounts, context, id, aka, services),
+        DidInstruction::AddAuthentication {} => add_authentication(program_id, accounts),
+        DidInstruction::AddService {} => Ok(()),
     }
 }
 
@@ -70,6 +67,28 @@ pub fn create_did(
     Ok(())
 }
 
+/// Add a new public key to a did document
+pub fn add_authentication(_: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
+    let account_info_iter = &mut accounts.iter();
+    let _ = next_account_info(account_info_iter)?;
+    let did_info = next_account_info(account_info_iter)?;
+    let new_auth_account = next_account_info(account_info_iter)?;
+    msg!("Adding: Pubkey");
+    let mut did = DidDocument::unpack_unchecked(&did_info.data.borrow())?;
+    msg!(std::str::from_utf8(&did.context).unwrap());
+    msg!(std::str::from_utf8(&did.id).unwrap());
+    msg!(std::str::from_utf8(&did.aka).unwrap());
+
+    did.authentication[1] = *new_auth_account.key;
+
+    msg!("Updating account data");
+    DidDocument::pack(did, &mut did_info.data.borrow_mut())?;
+
+    msg!("Added: Pubkey");
+
+    Ok(())
+}
+
 ///
 /// Instructions
 ///
@@ -91,6 +110,10 @@ pub enum DidInstruction {
         /// services represent ways to get data about the did subject
         services: u8,
     },
+    /// Adds a public key to a did document
+    AddAuthentication {},
+    /// Adds a service to a did document
+    AddService {},
 }
 
 impl DidInstruction {
@@ -117,41 +140,11 @@ impl DidInstruction {
                     services,
                 }
             }
+            1 => Self::AddAuthentication {},
+            2 => Self::AddService {},
             _ => return Err(ProgramError::InvalidArgument.into()),
         })
     }
-
-    //    fn unpack_pubkey(input: &[u8]) -> Result<(Pubkey, &[u8]), ProgramError> {
-    //        if input.len() >= 32 {
-    //            let (key, rest) = input.split_at(32);
-    //            let pk = Pubkey::new(key);
-    //            Ok((pk, rest))
-    //        } else {
-    //            Err(ProgramError::InvalidAccountData.into())
-    //        }
-    //    }
-
-    //    fn unpack_pubkey_option(input: &[u8]) -> Result<(COption<Pubkey>, &[u8]), ProgramError> {
-    //        match input.split_first() {
-    //            Option::Some((&0, rest)) => Ok((COption::None, rest)),
-    //            Option::Some((&1, rest)) if rest.len() >= 32 => {
-    //                let (key, rest) = rest.split_at(32);
-    //                let pk = Pubkey::new(key);
-    //                Ok((COption::Some(pk), rest))
-    //            }
-    //            _ => Err(ProgramError::InvalidAccountData),
-    //        }
-    //    }
-    //
-    //    fn pack_pubkey_option(value: &COption<Pubkey>, buf: &mut Vec<u8>) {
-    //        match *value {
-    //            COption::Some(ref key) => {
-    //                buf.push(1);
-    //                buf.extend_from_slice(&key.to_bytes());
-    //            }
-    //            COption::None => buf.push(0),
-    //        }
-    //    }
 }
 
 ///
@@ -199,7 +192,6 @@ impl Pack for DidDocument {
     const LEN: usize = 418;
     fn unpack_from_slice(src: &[u8]) -> Result<Self, ProgramError> {
         let src = array_ref![src, 0, 417];
-        //let (context, authentication, services) = array_refs![src, 1, 36, 1];
         let (context, id, aka, authentication_flat, services) =
             array_refs![src, 32, 32, 32, 32 * MAX_AUTH, 1];
         let context = cast_slice_as_array(context);
@@ -222,7 +214,6 @@ impl Pack for DidDocument {
             *dst = Pubkey::new(src);
         }
 
-        //    let authentication = unpack_coption_key(authentication)?;
         Ok(result)
     }
 
@@ -250,29 +241,10 @@ impl Pack for DidDocument {
     }
 }
 
+///
+/// Utils
+///
+
 fn cast_slice_as_array(input: &[u8]) -> [u8; 32] {
     input.try_into().expect("slice with incorrect length")
 }
-
-// Helpers
-//fn pack_coption_key(src: &COption<Pubkey>, dst: &mut [u8; 36]) {
-//    let (tag, body) = mut_array_refs![dst, 4, 32];
-//    match src {
-//        COption::Some(key) => {
-//            *tag = [1, 0, 0, 0];
-//            body.copy_from_slice(key.as_ref());
-//        }
-//        COption::None => {
-//            *tag = [0; 4];
-//        }
-//    }
-//}
-
-//fn unpack_coption_key(src: &[u8; 36]) -> Result<COption<Pubkey>, ProgramError> {
-//    let (tag, body) = array_refs![src, 4, 32];
-//    match *tag {
-//        [0, 0, 0, 0] => Ok(COption::None),
-//        [1, 0, 0, 0] => Ok(COption::Some(Pubkey::new_from_array(*body))),
-//        _ => Err(ProgramError::InvalidAccountData),
-//    }
-//}

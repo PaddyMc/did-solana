@@ -1,14 +1,22 @@
-const solana_web3 = require("@solana/web3.js");
-const lo = require("buffer-layout");
-const addAuthentication = require("./add-authentication");
+import {
+Account,
+Transaction,
+SystemProgram,
+	Connection,
+	sendAndConfirmTransaction,
+	PublicKey,
+	TransactionInstruction,
+} from "@solana/web3.js";
+import lo from "buffer-layout";
+//const addAuthentication = require("./add-authentication");
 
 const createDid = async (connection, programId) => {
   const lamports = 10 * 1000000000;
 
-  const account = new solana_web3.Account();
+  const account = new Account();
   await connection.requestAirdrop(account.publicKey, lamports);
 
-  const dataAccount = new solana_web3.Account();
+  const dataAccount = new Account();
 
   console.log("Payer Account:", account.publicKey.toString());
   console.log("Data Account:", dataAccount.publicKey.toString());
@@ -41,9 +49,9 @@ const createDid = async (connection, programId) => {
     numBytes
   );
 
-  const transaction = new solana_web3.Transaction();
+  const transaction = new Transaction();
   transaction.add(
-    solana_web3.SystemProgram.createAccount({
+    SystemProgram.createAccount({
       fromPubkey: account.publicKey,
       newAccountPubkey: dataAccount.publicKey,
       lamports: rentExemption,
@@ -52,7 +60,7 @@ const createDid = async (connection, programId) => {
     })
   );
 
-  const instruction = new solana_web3.TransactionInstruction({
+  const instruction = new TransactionInstruction({
     keys: [
       {
         pubkey: account.publicKey,
@@ -71,7 +79,7 @@ const createDid = async (connection, programId) => {
 
   transaction.add(instruction);
 
-  const result = await solana_web3.sendAndConfirmTransaction(
+  const result = await sendAndConfirmTransaction(
     connection,
     transaction,
     [account, dataAccount],
@@ -82,21 +90,28 @@ const createDid = async (connection, programId) => {
   );
 
   await getAccountInfo(connection, dataAccount.publicKey);
-  console.log("adding authentication")
+  console.log("adding authentication");
   //await addAuthentication(account, dataAccount);
   //console.log("added authentication")
   //await getAccountInfo(connection, dataAccount.publicKey);
 };
 
-const getAccountInfo = async (connection, pk) => {
+const getAccountInfo = async (pk) => {
+   let connection = new Connection(
+    "http://localhost:8899",
+    "singleGossip"
+  );
+  pk = new PublicKey(pk);
+
+
   if (!pk) {
     console.log("pk not provided");
     process.exit(1);
   }
 
-  let account = await connection.getAccountInfo(pk);
+  let account = await connection.getAccountInfo(pk).catch(err => (console.log));
 
-  let owner = new solana_web3.PublicKey(account.owner._bn);
+  let owner = new PublicKey(account.owner._bn);
 
   console.log("Inspecting pk:", pk.toString());
   console.log("Owner PubKey:", owner.toString());
@@ -105,7 +120,7 @@ const getAccountInfo = async (connection, pk) => {
     console.log("Account not found on chain");
     process.exit(1);
   }
-  decodeDid(account.data);
+  decodeDid(Buffer.from(account.data));
 };
 
 const decodeDid = (buf) => {
@@ -121,18 +136,17 @@ const decodeDid = (buf) => {
   console.log(data);
 };
 
-const main = async () => {
-  connection = new solana_web3.Connection(
-    "http://localhost:8899",
-    "singleGossip"
-  );
-  let programId = new solana_web3.PublicKey(process.argv[2]);
+//const main = async () => {
+//  
+//  let programId = new PublicKey(process.argv[2]);
+//
+//  await createDid(connection, programId);
+//};
 
-  await createDid(connection, programId);
-};
+//main();
 
-main();
-
-module.exports = {
-	getAccountInfo,
+export {
+  getAccountInfo,
+  decodeDid,
+  createDid,
 }
