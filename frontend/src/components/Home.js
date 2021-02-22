@@ -2,41 +2,144 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
-import LockIcon from "@material-ui/icons/Lock";
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import Button from "@material-ui/core/Button";
-import {getAccountInfo} from "../utils";
+import { getAccountInfo } from "../utils";
+import { decodePubkeys } from "../utils/add-authentication";
+import { decodeServices } from "../utils/add-service";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import Card from "@material-ui/core/Card";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import "./Home.css";
 
 const Home = () => {
   const [count, setCount] = useState(0);
   const [value, setValue] = useState();
+  const [identifier, setIdentifier] = useState();
+  const [pubkeys, setPubkeys] = useState();
+  const [services, setServices] = useState();
 
   // Similar to componentDidMount and componentDidUpdate:
-  useEffect(() => {
+  const getIdentifier = async () => {
     // Update the document title using the browser API
     const hacky = document.getElementById("standard-basic").value;
     if (hacky) {
-      const acc = getAccountInfo(hacky)
+      let identifier = await getAccountInfo(hacky);
+      if (identifier) {
+        setIdentifier(identifier);
+        let pubkeys = decodePubkeys(identifier.authentication);
+        setPubkeys(pubkeys);
+        let services = decodeServices(identifier.services);
+        setServices(services);
+      }
     }
-  });
+  };
 
+  //
   return (
     <Wrapper>
       <Container maxWidth="md">
         <div className="title">Query decentralized identifiers</div>
-        <section>
-          <p>Hello</p>
-          <form noValidate autoComplete="off">
-            <TextField value={value} id="standard-basic" label="Enter public key here" color="default" />
-            <Button
-              variant="contained"
-              color="default"
-              onClick={() => setCount(count + 1)}
-              startIcon={<LockIcon />}
+        <Grid direction="column" spacing={12} justify="space-between">
+          <Paper className="spacing">
+            <Grid container spacing={3}>
+              <Grid
+                alignItems="center"
+                align="center"
+                className="textgrid"
+                item
+                xs={8}
+              >
+                <TextField
+                  value={value}
+                  id="standard-basic"
+                  maxWidth="1000px"
+                  label="Enter a data key here to get a did"
+                  color="default"
+                />
+              </Grid>
+              <Grid
+                item
+                className="button"
+                alignItems="center"
+                align="center"
+                justify="center"
+                xs={4}
+              >
+                <Button
+                  variant="contained"
+                  onClick={() => getIdentifier()}
+                  startIcon={<AssignmentIndIcon />}
+                >
+                  Get Identifier
+                </Button>
+              </Grid>
+            </Grid>
+	  {identifier && (
+            <Grid
+              container
+              className="spacing"
+              justify="center"
+              alignItems="center"
+              spacing={3}
             >
-              Upload
-            </Button>
-          </form>
-        </section>
+              <Card className="root" variant="outlined">
+                <CardContent>
+                  <Typography
+                    className="title"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Identifier Id
+                  </Typography>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    {identifier && identifier.id}
+                  </Typography>
+                  <Typography
+                    className="title"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Aka (also known as)
+                  </Typography>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    {identifier && identifier.aka}
+                  </Typography>
+                  <Typography
+                    className="title"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Public Keys
+                  </Typography>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    {pubkeys && pubkeys.pubkey1.toString("base64")}
+                  </Typography>
+                  <Typography
+                    className="title"
+                    color="textSecondary"
+                    gutterBottom
+                  >
+                    Services
+                  </Typography>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    {services && services[0].id}
+                  </Typography>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    {services && services[0].serviceType}
+                  </Typography>
+                  <Typography variant="h5" component="h2" gutterBottom>
+                    {services && services[0].serviceKey}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+	  )}
+          </Paper>
+        </Grid>
       </Container>
     </Wrapper>
   );
@@ -45,23 +148,20 @@ const Home = () => {
 const Wrapper = styled.div`
   min-height: calc(100vh - 50px);
   display: flex;
+  background-color: #333;
   flex-direction: column;
+  color: #fff;
 
   div.title {
     font-size: 40px;
     font-weight: bold;
-    padding-top: 10px;
+    padding-top: 20px;
+    padding-bottom: 40px;
     text-align: center;
   }
   div.subtitle {
     font-size: 30px;
     font-weight: bold;
-  }
-
-  section {
-    p {
-      font-size: 20px;
-    }
   }
 `;
 

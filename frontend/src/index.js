@@ -8,10 +8,8 @@ import Container from "./components/Container";
 
 const App = () => (
   <Router>
-    <div>
-      <Header />
-      <Container />
-    </div>
+    <Header />
+    <Container />
   </Router>
 );
 

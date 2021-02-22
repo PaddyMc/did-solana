@@ -1,6 +1,7 @@
 const solana_web3 = require("@solana/web3.js");
 const lo = require("buffer-layout");
-const addAuthentication = require("./add-authentication");
+const { addAuthentication, decodePubkeys } = require("./add-authentication");
+const { addService, decodeservices, decodeServices } = require("./add-service");
 
 const createDid = async (connection, programId) => {
   const lamports = 10 * 1000000000;
@@ -10,17 +11,16 @@ const createDid = async (connection, programId) => {
 
   const dataAccount = new solana_web3.Account();
 
-  console.log("Payer Account:", account.publicKey.toString());
-  console.log("Data Account:", dataAccount.publicKey.toString());
+  //console.log("Payer Account:", account.publicKey.toString());
+  //console.log("Data Account:", dataAccount.publicKey.toString());
 
   const dataLayout = lo.struct([
     lo.u8("instruction"),
     lo.cstr("context"),
     lo.cstr("id"),
     lo.cstr("aka"),
-    lo.u8("services"),
   ]);
-  const numBytes = 1 + 32 + 32 + 32 + 32 * 10 + 1;
+  const numBytes = 1 + 32 + 32 + 32 + 32 * 10 + 96 * 4;
   console.log(numBytes);
   const data = Buffer.alloc(numBytes);
 
@@ -32,7 +32,6 @@ const createDid = async (connection, programId) => {
         `did:sol:${dataAccount.publicKey.toString()}`.substring(0, 31)
       ),
       aka: Buffer.from(`Paddy`.padEnd(32).substring(0, 31)),
-      services: 5,
     },
     data
   );
@@ -81,11 +80,14 @@ const createDid = async (connection, programId) => {
     }
   );
 
+  console.log("adding authentication");
+  await addAuthentication(connection, programId, account, dataAccount);
+  console.log("added authentication");
   await getAccountInfo(connection, dataAccount.publicKey);
-  console.log("adding authentication")
-  //await addAuthentication(account, dataAccount);
-  //console.log("added authentication")
-  //await getAccountInfo(connection, dataAccount.publicKey);
+  console.log("adding services");
+  await addService(connection, programId, account, dataAccount);
+  console.log("added services");
+  await getAccountInfo(connection, dataAccount.publicKey);
 };
 
 const getAccountInfo = async (connection, pk) => {
@@ -98,8 +100,8 @@ const getAccountInfo = async (connection, pk) => {
 
   let owner = new solana_web3.PublicKey(account.owner._bn);
 
-  console.log("Inspecting pk:", pk.toString());
-  console.log("Owner PubKey:", owner.toString());
+  //console.log("Inspecting pk:", pk.toString());
+  //console.log("Owner PubKey:", owner.toString());
 
   if (!account) {
     console.log("Account not found on chain");
@@ -109,16 +111,17 @@ const getAccountInfo = async (connection, pk) => {
 };
 
 const decodeDid = (buf) => {
-  console.log(buf);
   const dataLayout = lo.struct([
     lo.cstr("context"),
     lo.cstr("id"),
     lo.cstr("aka"),
     lo.blob(320, "authentication"),
-    lo.u8("services"),
+    lo.blob(384, "services"),
   ]);
   let data = dataLayout.decode(buf);
   console.log(data);
+  decodePubkeys(data.authentication);
+  decodeServices(data.services);
 };
 
 const main = async () => {
@@ -134,5 +137,5 @@ const main = async () => {
 main();
 
 module.exports = {
-	getAccountInfo,
-}
+  getAccountInfo,
+};

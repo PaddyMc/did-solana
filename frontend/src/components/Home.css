@@ -1,0 +1,31 @@
+.button {
+  display: flex;
+}
+
+.textgrid {
+  display: grid;
+  marginleft: 10px;
+}
+
+.input {
+  display: grid;
+  marginleft: 10px;
+}
+
+.spacing {
+  padding: 20px;
+}
+.root {
+  minwidth: 275;
+}
+.bullet {
+  display: inlineBlock;
+  margin: 0 2px;
+  transform: scale(0.8);
+}
+.title {
+  fontsize: 14;
+}
+.pos {
+  marginbottom: 12;
+}

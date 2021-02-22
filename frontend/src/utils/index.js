@@ -1,16 +1,24 @@
 import {
-Account,
-Transaction,
-SystemProgram,
-	Connection,
-	sendAndConfirmTransaction,
-	PublicKey,
-	TransactionInstruction,
+  Account,
+  Transaction,
+  SystemProgram,
+  Connection,
+  sendAndConfirmTransaction,
+  PublicKey,
+  TransactionInstruction,
 } from "@solana/web3.js";
 import lo from "buffer-layout";
+import { decodePubkeys } from "./add-authentication";
+import { decodeServices } from "./add-service";
 //const addAuthentication = require("./add-authentication");
 
-const createDid = async (connection, programId) => {
+const createDid = async (programIdString, aka) => {
+  let connection = new Connection(
+    "http://localhost:8899",
+    "singleGossip"
+  );
+  let programId = new PublicKey(programIdString);
+
   const lamports = 10 * 1000000000;
 
   const account = new Account();
@@ -26,9 +34,10 @@ const createDid = async (connection, programId) => {
     lo.cstr("context"),
     lo.cstr("id"),
     lo.cstr("aka"),
-    lo.u8("services"),
   ]);
-  const numBytes = 1 + 32 + 32 + 32 + 32 * 10 + 1;
+
+  const numBytes = 1 + 32 + 32 + 32 + 32 * 10 + 96 * 4;
+
   console.log(numBytes);
   const data = Buffer.alloc(numBytes);
 
@@ -39,8 +48,7 @@ const createDid = async (connection, programId) => {
       id: Buffer.from(
         `did:sol:${dataAccount.publicKey.toString()}`.substring(0, 31)
       ),
-      aka: Buffer.from(`Paddy`.padEnd(32).substring(0, 31)),
-      services: 5,
+      aka: Buffer.from(aka.padEnd(32).substring(0, 31)),
     },
     data
   );
@@ -89,27 +97,35 @@ const createDid = async (connection, programId) => {
     }
   );
 
-  await getAccountInfo(connection, dataAccount.publicKey);
-  console.log("adding authentication");
+localStorage.setItem("account", JSON.stringify(account))
+localStorage.setItem("dataAccount", JSON.stringify(dataAccount))
+ 
+
+   return {
+	ownerAccount: account.publicKey.toString(),
+	dataAccount: dataAccount.publicKey.toString(),
+   }
+
   //await addAuthentication(account, dataAccount);
   //console.log("added authentication")
   //await getAccountInfo(connection, dataAccount.publicKey);
 };
 
 const getAccountInfo = async (pk) => {
-   let connection = new Connection(
-    "http://localhost:8899",
-    "singleGossip"
-  );
-  pk = new PublicKey(pk);
-
+  let connection = new Connection("http://localhost:8899", "singleGossip");
+  try {
+    pk = new PublicKey(pk);
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 
   if (!pk) {
     console.log("pk not provided");
     process.exit(1);
   }
 
-  let account = await connection.getAccountInfo(pk).catch(err => (console.log));
+  let account = await connection.getAccountInfo(pk).catch((err) => console.log);
 
   let owner = new PublicKey(account.owner._bn);
 
@@ -120,33 +136,21 @@ const getAccountInfo = async (pk) => {
     console.log("Account not found on chain");
     process.exit(1);
   }
-  decodeDid(Buffer.from(account.data));
+  return decodeDid(Buffer.from(account.data));
 };
 
 const decodeDid = (buf) => {
-  console.log(buf);
   const dataLayout = lo.struct([
     lo.cstr("context"),
     lo.cstr("id"),
     lo.cstr("aka"),
     lo.blob(320, "authentication"),
-    lo.u8("services"),
+    lo.blob(384, "services"),
   ]);
-  let data = dataLayout.decode(buf);
+  const data = dataLayout.decode(buf);
+  console.log("decodedData");
   console.log(data);
+  return data;
 };
 
-//const main = async () => {
-//  
-//  let programId = new PublicKey(process.argv[2]);
-//
-//  await createDid(connection, programId);
-//};
-
-//main();
-
-export {
-  getAccountInfo,
-  decodeDid,
-  createDid,
-}
+export { getAccountInfo, decodeDid, createDid };
