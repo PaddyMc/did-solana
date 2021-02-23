@@ -18,7 +18,7 @@ const addService = async (
   serviceDataKey
 ) => {
   //  console.log("Owner PubKey:", ownerAccount.publicKey.toString());
-  let connection = new Connection("http://localhost:8899", "singleGossip");
+  let connection = new Connection("https://devnet.solana.com", "singleGossip");
   let programId = new PublicKey(programIdString);
   const lamports = 10 * 1000000000;
   const account = new Account();
@@ -68,15 +68,10 @@ const addService = async (
 
   transaction.add(instruction);
 
-  const result = await sendAndConfirmTransaction(
-    connection,
-    transaction,
-    [ownerAccount],
-    {
-      confirmations: 1,
-      skipPreflight: true,
-    }
-  ).catch((error) => {
+  await sendAndConfirmTransaction(connection, transaction, [ownerAccount], {
+    confirmations: 1,
+    skipPreflight: true,
+  }).catch((error) => {
     console.log(error);
   });
 

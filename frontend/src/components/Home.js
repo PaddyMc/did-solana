@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
@@ -10,25 +10,27 @@ import { decodeServices } from "../utils/add-service";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import { values } from "ramda";
 import { PublicKey } from "@solana/web3.js";
 import "./Home.css";
+import ReactLoading from "react-loading";
 
 const Home = () => {
-  const [count, setCount] = useState(0);
-  const [value, setValue] = useState();
+  const [value] = useState();
   const [identifier, setIdentifier] = useState();
   const [pubkeys, setPubkeys] = useState();
   const [services, setServices] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Similar to componentDidMount and componentDidUpdate:
   const getIdentifier = async () => {
     // Update the document title using the browser API
     const hacky = document.getElementById("standard-basic").value;
     if (hacky) {
+      setIsLoading(true);
+      setIdentifier();
       let identifier = await getAccountInfo(hacky);
       if (identifier) {
         setIdentifier(identifier);
@@ -38,6 +40,7 @@ const Home = () => {
         let services = decodeServices(identifier.services);
         setServices(services);
       }
+      setIsLoading(false);
     }
   };
 
@@ -80,6 +83,17 @@ const Home = () => {
                 </Button>
               </Grid>
             </Grid>
+            {isLoading && (
+              <Grid
+                container
+                className="spacing"
+                justify="center"
+                alignItems="center"
+                spacing={3}
+              >
+                <ReactLoading type={"bars"} color={"grey"} />
+              </Grid>
+            )}
             {identifier && (
               <Grid
                 container
@@ -120,7 +134,7 @@ const Home = () => {
                     {pubkeys &&
                       values(pubkeys).map((pubkey) => (
                         <Typography variant="h5" component="h2" gutterBottom>
-                          {pubkey.toString("base64") !=
+                          {pubkey.toString("base64") !==
                             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" &&
                             new PublicKey(pubkey).toBase58()}
                         </Typography>

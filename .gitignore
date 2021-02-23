@@ -1,5 +1,7 @@
 /target
-/program/target
-/cli/node_modules
+/program/identifier/target
+/program/license-service/target
+/program/identifier/cli/node_modules
+/program/license-service/cli/node_modules
 /frontend/node_modules
 *.swp

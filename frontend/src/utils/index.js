@@ -8,12 +8,10 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 import lo from "buffer-layout";
-import { decodePubkeys } from "./add-authentication";
-import { decodeServices } from "./add-service";
 //const addAuthentication = require("./add-authentication");
 
 const createDid = async (programIdString, aka) => {
-  let connection = new Connection("http://localhost:8899", "singleGossip");
+  let connection = new Connection("https://devnet.solana.com", "singleGossip");
   let programId = new PublicKey(programIdString);
 
   const lamports = 10 * 1000000000;
@@ -84,7 +82,7 @@ const createDid = async (programIdString, aka) => {
 
   transaction.add(instruction);
 
-  const result = await sendAndConfirmTransaction(
+  await sendAndConfirmTransaction(
     connection,
     transaction,
     [account, dataAccount],
@@ -110,7 +108,7 @@ const createDid = async (programIdString, aka) => {
 };
 
 const getAccountInfo = async (pk) => {
-  let connection = new Connection("http://localhost:8899", "singleGossip");
+  let connection = new Connection("https://devnet.solana.com", "singleGossip");
   try {
     pk = new PublicKey(pk);
   } catch (error) {
@@ -125,14 +123,18 @@ const getAccountInfo = async (pk) => {
 
   let account = await connection.getAccountInfo(pk).catch((err) => console.log);
 
-  let owner = new PublicKey(account.owner._bn);
+  // let owner = new PublicKey(account.owner._bn);
 
   //  console.log("Inspecting pk:", pk.toString());
   //  console.log("Owner PubKey:", owner.toString());
 
   if (!account) {
     console.log("Account not found on chain");
-    process.exit(1);
+    return false;
+  }
+  if (!account.data) {
+    console.log("Account has no data");
+    return false;
   }
   return decodeDid(Buffer.from(account.data));
 };

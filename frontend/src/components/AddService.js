@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
-import { decodePubkeys } from "../utils/add-authentication";
-import { decodeServices, addService } from "../utils/add-service";
+import { addService } from "../utils/add-service";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Card from "@material-ui/core/Card";
-import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -17,20 +15,20 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import "./AddService.css";
+import ReactLoading from "react-loading";
 
 const AddService = () => {
-  const [value, setValue] = useState();
+  const [value] = useState();
   const [identifier, setIdentifier] = useState();
   const [type, setType] = React.useState("");
   const handleChange = (event) => {
     setType(event.target.value);
   };
-  const [account, setAccount] = useState(
-    JSON.parse(localStorage.getItem("account"))
-  );
-  const [dataAccount, setDataAccount] = useState(
+  const [account] = useState(JSON.parse(localStorage.getItem("account")));
+  const [dataAccount] = useState(
     JSON.parse(localStorage.getItem("dataAccount"))
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   // Similar to componentDidMount and componentDidUpdate:
   const getIdentifier = async () => {
@@ -38,14 +36,17 @@ const AddService = () => {
     const id = document.getElementById("standard-id").value;
     const key = document.getElementById("standard-key").value;
     if (id && key) {
+      setIsLoading(true);
+      setIdentifier();
       let identifier = await addService(
-        "AmmabwF1cQka6rMosVgBCjbwpEk2pdxuozLYmFAtgBCi",
+        "3zgomZzhRMyep8nBuCJA67ayMr7LScQtrGPTruS7wRHu",
         account,
         dataAccount,
         id,
         type,
         key
       );
+      setIsLoading(false);
       if (identifier) {
         setIdentifier(identifier);
       }
@@ -111,6 +112,17 @@ const AddService = () => {
                 Add Service
               </Button>
             </Grid>
+            {isLoading && (
+              <Grid
+                container
+                className="spacing"
+                justify="center"
+                alignItems="center"
+                spacing={3}
+              >
+                <ReactLoading type={"bars"} color={"grey"} />
+              </Grid>
+            )}
             {identifier && (
               <Grid
                 container
