@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from "@material-ui/icons/Add";
 import Button from "@material-ui/core/Button";
 import { createDid } from "../utils";
 import { decodePubkeys } from "../utils/add-authentication";
@@ -23,7 +23,10 @@ const CreateDid = () => {
     // Update the document title using the browser API
     const hacky = document.getElementById("standard-basic").value;
     if (hacky) {
-      let identifier = await createDid("AmmabwF1cQka6rMosVgBCjbwpEk2pdxuozLYmFAtgBCi", hacky);
+      let identifier = await createDid(
+        "AmmabwF1cQka6rMosVgBCjbwpEk2pdxuozLYmFAtgBCi",
+        hacky
+      );
       if (identifier) {
         setIdentifier(identifier);
       }
@@ -68,50 +71,52 @@ const CreateDid = () => {
                 </Button>
               </Grid>
             </Grid>
-	  {identifier && (
-            <Grid
-              container
-              className="spacing"
-              justify="center"
-              alignItems="center"
-              spacing={3}
-            >
-              <Card className="root" variant="outlined">
-                <CardContent>
-                  <Typography
-                    className="title"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Your account address
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {identifier && identifier.ownerAccount}
-                  </Typography>
-                  <Typography
-                    className="title"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Data account (Use this to query data in the Home tab)
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {identifier && identifier.dataAccount}
-                  </Typography>
-                  <Typography
-                    className="title"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Information
-                  </Typography>
-                  <Typography component="p" gutterBottom>
-                    Your account has be added to local storage for use adding authentication and services
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-	  )}
+            {identifier && (
+              <Grid
+                container
+                className="spacing"
+                justify="center"
+                alignItems="center"
+                spacing={3}
+              >
+                <Card className="root" variant="outlined">
+                  <CardContent>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Data account (Use this to query data in the Home tab)
+                    </Typography>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {identifier && identifier.dataAccount}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Your account address
+                    </Typography>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {identifier && identifier.ownerAccount}
+                    </Typography>
+
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Information
+                    </Typography>
+                    <Typography component="p" gutterBottom>
+                      Your account has be added to local storage for use adding
+                      authentication and services
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            )}
           </Paper>
         </Grid>
       </Container>

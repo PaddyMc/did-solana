@@ -13,6 +13,10 @@ import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import {values} from "ramda"
+import {
+  PublicKey,
+} from "@solana/web3.js";
 import "./Home.css";
 
 const Home = () => {
@@ -31,6 +35,7 @@ const Home = () => {
       if (identifier) {
         setIdentifier(identifier);
         let pubkeys = decodePubkeys(identifier.authentication);
+	console.log(pubkeys)
         setPubkeys(pubkeys);
         let services = decodeServices(identifier.services);
         setServices(services);
@@ -38,7 +43,6 @@ const Home = () => {
     }
   };
 
-  //
   return (
     <Wrapper>
       <Container maxWidth="md">
@@ -78,66 +82,68 @@ const Home = () => {
                 </Button>
               </Grid>
             </Grid>
-	  {identifier && (
-            <Grid
-              container
-              className="spacing"
-              justify="center"
-              alignItems="center"
-              spacing={3}
-            >
-              <Card className="root" variant="outlined">
-                <CardContent>
-                  <Typography
-                    className="title"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Identifier Id
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {identifier && identifier.id}
-                  </Typography>
-                  <Typography
-                    className="title"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Aka (also known as)
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {identifier && identifier.aka}
-                  </Typography>
-                  <Typography
-                    className="title"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Public Keys
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {pubkeys && pubkeys.pubkey1.toString("base64")}
-                  </Typography>
-                  <Typography
-                    className="title"
-                    color="textSecondary"
-                    gutterBottom
-                  >
-                    Services
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {services && services[0].id}
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {services && services[0].serviceType}
-                  </Typography>
-                  <Typography variant="h5" component="h2" gutterBottom>
-                    {services && services[0].serviceKey}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-	  )}
+            {identifier && (
+              <Grid
+                container
+                className="spacing"
+                justify="center"
+                alignItems="center"
+                spacing={3}
+              >
+                <Card className="root" variant="outlined">
+                  <CardContent>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Identifier
+                    </Typography>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {identifier && identifier.id}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Aka (also known as)
+                    </Typography>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {identifier && identifier.aka}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Public Keys (base64 encoded)
+                    </Typography>
+		    {pubkeys && values(pubkeys).map(pubkey => (
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {pubkey.toString("base64") != "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" && new PublicKey(pubkey).toBase58()}
+                    </Typography>
+			    ))}
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Services (can be used to resolve data about the did subject)
+                    </Typography>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {services && services[0].id}
+                    </Typography>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {services && services[0].serviceType}
+                    </Typography>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                      {services && services[0].serviceKey}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            )}
           </Paper>
         </Grid>
       </Container>

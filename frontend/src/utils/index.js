@@ -13,10 +13,7 @@ import { decodeServices } from "./add-service";
 //const addAuthentication = require("./add-authentication");
 
 const createDid = async (programIdString, aka) => {
-  let connection = new Connection(
-    "http://localhost:8899",
-    "singleGossip"
-  );
+  let connection = new Connection("http://localhost:8899", "singleGossip");
   let programId = new PublicKey(programIdString);
 
   const lamports = 10 * 1000000000;
@@ -26,8 +23,8 @@ const createDid = async (programIdString, aka) => {
 
   const dataAccount = new Account();
 
-  console.log("Payer Account:", account.publicKey.toString());
-  console.log("Data Account:", dataAccount.publicKey.toString());
+//  console.log("Payer Account:", account.publicKey.toString());
+//  console.log("Data Account:", dataAccount.publicKey.toString());
 
   const dataLayout = lo.struct([
     lo.u8("instruction"),
@@ -95,16 +92,15 @@ const createDid = async (programIdString, aka) => {
       confirmations: 1,
       skipPreflight: true,
     }
-  );
+  ).catch((error)=>{console.log(error)});
 
-localStorage.setItem("account", JSON.stringify(account))
-localStorage.setItem("dataAccount", JSON.stringify(dataAccount))
- 
+  localStorage.setItem("account", JSON.stringify(account));
+  localStorage.setItem("dataAccount", JSON.stringify(dataAccount));
 
-   return {
-	ownerAccount: account.publicKey.toString(),
-	dataAccount: dataAccount.publicKey.toString(),
-   }
+  return {
+    ownerAccount: account.publicKey.toString(),
+    dataAccount: dataAccount.publicKey.toString(),
+  };
 
   //await addAuthentication(account, dataAccount);
   //console.log("added authentication")
@@ -129,8 +125,8 @@ const getAccountInfo = async (pk) => {
 
   let owner = new PublicKey(account.owner._bn);
 
-  console.log("Inspecting pk:", pk.toString());
-  console.log("Owner PubKey:", owner.toString());
+//  console.log("Inspecting pk:", pk.toString());
+//  console.log("Owner PubKey:", owner.toString());
 
   if (!account) {
     console.log("Account not found on chain");
@@ -148,7 +144,6 @@ const decodeDid = (buf) => {
     lo.blob(384, "services"),
   ]);
   const data = dataLayout.decode(buf);
-  console.log("decodedData");
   console.log(data);
   return data;
 };

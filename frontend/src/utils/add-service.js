@@ -59,7 +59,7 @@ const addService = async (connection, programId, ownerAccount, dataAccount) => {
       confirmations: 1,
       skipPreflight: true,
     }
-  );
+  ).catch((error)=>{console.log(error)});
 };
 
 const decodeServices = (buf) => {
@@ -84,7 +84,6 @@ const decodeService = (buf) => {
     lo.cstr("serviceKey"),
   ]);
   let data = dataLayout.decode(buf);
-  console.log(data);
   return data;
 };
 
