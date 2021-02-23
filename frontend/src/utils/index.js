@@ -23,8 +23,8 @@ const createDid = async (programIdString, aka) => {
 
   const dataAccount = new Account();
 
-//  console.log("Payer Account:", account.publicKey.toString());
-//  console.log("Data Account:", dataAccount.publicKey.toString());
+  //  console.log("Payer Account:", account.publicKey.toString());
+  //  console.log("Data Account:", dataAccount.publicKey.toString());
 
   const dataLayout = lo.struct([
     lo.u8("instruction"),
@@ -92,7 +92,9 @@ const createDid = async (programIdString, aka) => {
       confirmations: 1,
       skipPreflight: true,
     }
-  ).catch((error)=>{console.log(error)});
+  ).catch((error) => {
+    console.log(error);
+  });
 
   localStorage.setItem("account", JSON.stringify(account));
   localStorage.setItem("dataAccount", JSON.stringify(dataAccount));
@@ -125,8 +127,8 @@ const getAccountInfo = async (pk) => {
 
   let owner = new PublicKey(account.owner._bn);
 
-//  console.log("Inspecting pk:", pk.toString());
-//  console.log("Owner PubKey:", owner.toString());
+  //  console.log("Inspecting pk:", pk.toString());
+  //  console.log("Owner PubKey:", owner.toString());
 
   if (!account) {
     console.log("Account not found on chain");

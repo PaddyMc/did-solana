@@ -7,7 +7,7 @@ import {
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import lo from "buffer-layout";
-import {values} from "ramda"
+import { values } from "ramda";
 
 const addAuthentication = async (
   programIdString,
@@ -19,12 +19,12 @@ const addAuthentication = async (
   const lamports = 10 * 1000000000;
   const account = new Account();
   await connection.requestAirdrop(account.publicKey, lamports);
-  ownerAccount = new Account(values(ownerAccount._keypair.secretKey))
-  dataAccount = new Account(values(dataAccount._keypair.secretKey))
+  ownerAccount = new Account(values(ownerAccount._keypair.secretKey));
+  dataAccount = new Account(values(dataAccount._keypair.secretKey));
 
-    console.log("Owner PubKey:", ownerAccount.publicKey.toString());
-    console.log("Data PubKey:", dataAccount.publicKey.toString());
-    console.log("New PubKey:", account.publicKey.toString());
+  console.log("Owner PubKey:", ownerAccount.publicKey.toString());
+  console.log("Data PubKey:", dataAccount.publicKey.toString());
+  console.log("New PubKey:", account.publicKey.toString());
   const numBytes = 1;
   const data = Buffer.alloc(numBytes);
   const dataLayout = lo.struct([lo.u8("instruction")]);
@@ -68,7 +68,9 @@ const addAuthentication = async (
       confirmations: 1,
       skipPreflight: true,
     }
-  ).catch((error)=>{console.log(error)})
+  ).catch((error) => {
+    console.log(error);
+  });
 
   return {
     ownerAccount: ownerAccount.publicKey.toString(),

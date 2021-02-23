@@ -2,12 +2,29 @@ import {
   Account,
   Transaction,
   TransactionInstruction,
+  PublicKey,
+  Connection,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import lo from "buffer-layout";
+import { values } from "ramda";
 
-const addService = async (connection, programId, ownerAccount, dataAccount) => {
+const addService = async (
+  programIdString,
+  ownerAccount,
+  dataAccount,
+  serviceId,
+  serviceType,
+  serviceDataKey
+) => {
   //  console.log("Owner PubKey:", ownerAccount.publicKey.toString());
+  let connection = new Connection("http://localhost:8899", "singleGossip");
+  let programId = new PublicKey(programIdString);
+  const lamports = 10 * 1000000000;
+  const account = new Account();
+  await connection.requestAirdrop(account.publicKey, lamports);
+  ownerAccount = new Account(values(ownerAccount._keypair.secretKey));
+  dataAccount = new Account(values(dataAccount._keypair.secretKey));
   console.log("Data PubKey:", dataAccount.publicKey.toString());
 
   const numBytes = 1 + 32 + 32 + 50;
@@ -24,12 +41,12 @@ const addService = async (connection, programId, ownerAccount, dataAccount) => {
   dataLayout.encode(
     {
       instruction: 2, // InitializeAddService instruction
-      id: Buffer.from(`id-for-service`.padEnd(32).substring(0, 31)),
-      service_type: Buffer.from(`Paddy`.padEnd(32).substring(0, 31)),
-      service_key: dataAccount.publicKey,
+      id: Buffer.from(serviceId.padEnd(32).substring(0, 31)),
+      service_type: Buffer.from(serviceType.padEnd(32).substring(0, 31)),
+      service_key: Buffer.from(serviceDataKey.padEnd(32).substring(0, 31)),
     },
     data
-  );
+  ); //new PublicKey(serviceDataKey).toBuffer()
   const transaction = new Transaction();
 
   const instruction = new TransactionInstruction({
@@ -59,7 +76,15 @@ const addService = async (connection, programId, ownerAccount, dataAccount) => {
       confirmations: 1,
       skipPreflight: true,
     }
-  ).catch((error)=>{console.log(error)});
+  ).catch((error) => {
+    console.log(error);
+  });
+
+  return {
+    ownerAccount: ownerAccount.publicKey.toString(),
+    dataAccount: dataAccount.publicKey.toString(),
+    serviceAccount: serviceDataKey,
+  };
 };
 
 const decodeServices = (buf) => {
