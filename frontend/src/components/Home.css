@@ -15,9 +15,6 @@
 .spacing {
   padding: 20px;
 }
-.root {
-  minwidth: 275;
-}
 .bullet {
   display: inlineBlock;
   margin: 0 2px;
@@ -28,4 +25,38 @@
 }
 .pos {
   marginbottom: 12;
+}
+
+.headerGrid {
+  display: flex;
+}
+
+.menuGrid {
+  margin-top: 25px;
+  padding: 10px;
+  display: grid !important ;
+}
+
+.icon {
+  align-self: center !important;
+  justify-self: center !important;
+}
+
+.card {
+  background-color: #f5f5f5;
+  margin-top: 30px;
+  outline: #00ffbd;
+}
+
+.titlecard {
+  background-color: #f5f5f5;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.headercard {
+  background-color: #f5f5f5;
+  margin-top: 40px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }

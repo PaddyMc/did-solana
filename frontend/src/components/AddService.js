@@ -14,6 +14,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
+import UserMenu from "./UserMenu";
 import "./AddService.css";
 import ReactLoading from "react-loading";
 
@@ -54,10 +55,21 @@ const AddService = () => {
   };
   return (
     <Wrapper>
-      <Container maxWidth="md">
-        <div className="title">Add a service to your did document</div>
+      <Container maxWidth="ml">
+        <Paper elevation="10" className="card">
+        <Grid item xs={12} justify="center" className="headerGrid">
+          <Grid item xs={12}>
+            <div className="title">Add a service to your DID</div>
+          </Grid>
+          {dataAccount && (
+            <Grid item xs={2} justify="center" className="menuGrid">
+              <UserMenu refersh={identifier} />
+            </Grid>
+          )}
+        </Grid>
+	  </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
-          <Paper className="spacing">
+          <Paper elevation="10" className="spacing card">
             <Grid container justify="center" spacing={6}>
               <Grid
                 alignItems="center"
@@ -73,7 +85,7 @@ const AddService = () => {
                   label="Enter an id of the service here"
                   color="default"
                 />
-                <FormControl>
+                <FormControl className="buttonServicePage">
                   <InputLabel id="label">Service Type</InputLabel>
                   <Select
                     labelId="label"
@@ -88,6 +100,7 @@ const AddService = () => {
                 </FormControl>
                 <TextField
                   value={value}
+                  className="buttonServicePage"
                   id="standard-key"
                   maxWidth="1000px"
                   label="Enter the data key of the service here (will be used to get data)"
@@ -97,14 +110,14 @@ const AddService = () => {
             </Grid>
             <Grid
               item
-              className="button"
               alignItems="center"
               justify="flex-end"
               align="center"
+              className="button"
               xs={10}
             >
               <Button
-                className="button"
+                className="buttonServicePage"
                 variant="contained"
                 onClick={() => getIdentifier()}
                 startIcon={<AddIcon />}
@@ -177,16 +190,14 @@ const AddService = () => {
 const Wrapper = styled.div`
   min-height: calc(100vh - 50px);
   display: flex;
-  background-color: #333;
   flex-direction: column;
-  color: #fff;
 
   div.title {
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 35px;
     padding-top: 20px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
     text-align: center;
+    font-family: roboto;
   }
   div.subtitle {
     font-size: 30px;

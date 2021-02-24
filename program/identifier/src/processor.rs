@@ -76,15 +76,16 @@ pub fn add_authentication(_: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult
     let _ = next_account_info(account_info_iter)?;
     let did_info = next_account_info(account_info_iter)?;
     let new_auth_account = next_account_info(account_info_iter)?;
-    msg!("Adding: Pubkey");
     let mut did = DidDocument::unpack_unchecked(&did_info.data.borrow())?;
-    msg!(std::str::from_utf8(&did.context).unwrap());
-    msg!(std::str::from_utf8(&did.id).unwrap());
-    msg!(std::str::from_utf8(&did.aka).unwrap());
 
-    did.authentication[1] = *new_auth_account.key;
+    for i in 0..10 {
+        msg!("{}", did.authentication[i]);
+        if did.authentication[i].to_bytes()[0] == std::u8::MIN {
+            did.authentication[i] = *new_auth_account.key;
+            break;
+        }
+    }
 
-    msg!("Updating account data");
     DidDocument::pack(did, &mut did_info.data.borrow_mut())?;
 
     msg!("Added: Pubkey");
@@ -98,27 +99,27 @@ pub fn add_service(
     accounts: &[AccountInfo],
     id: [u8; 32],
     service_type: [u8; 32],
-    service_key: [u8; 32],
+    service_key: Pubkey,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
     let _ = next_account_info(account_info_iter)?;
     let did_info = next_account_info(account_info_iter)?;
-    msg!(std::str::from_utf8(&id).unwrap());
-    msg!(std::str::from_utf8(&service_type).unwrap());
-    msg!(std::str::from_utf8(&service_key).unwrap());
-    msg!("Adding Service");
     let mut did = DidDocument::unpack_unchecked(&did_info.data.borrow())?;
     let new_service = Service {
         id,
         service_type,
         service_key,
     };
-    did.services[0] = new_service;
+    for i in 0..4 {
+        if did.services[i].id[0] == std::u8::MIN {
+            did.services[i] = new_service;
+            break;
+        }
+    }
 
-    msg!("Updating account data");
     DidDocument::pack(did, &mut did_info.data.borrow_mut())?;
 
-    msg!("Added service");
+    msg!("Added: Service");
 
     Ok(())
 }
@@ -148,7 +149,7 @@ pub enum DidInstruction {
         /// service type represents the types of service e.g AMM_Licence or Bridge_Licence
         service_type: [u8; 32],
         /// service_key is the account where the service data is stored
-        service_key: [u8; 32],
+        service_key: Pubkey,
     },
 }
 
@@ -178,7 +179,7 @@ impl DidInstruction {
 
                 let id = cast_slice_as_array(id);
                 let service_type = cast_slice_as_array(service_type);
-                let service_key = cast_slice_as_array(service_key);
+                let service_key = Pubkey::new(service_key);
                 Self::AddService {
                     id,
                     service_type,
@@ -279,18 +280,17 @@ impl Pack for DidDocument {
         *context_dst = context;
         *id_dst = id;
         *aka_dst = aka;
-        for (i, src) in self.authentication.iter().enumerate() {
+        for (i, src) in authentication.iter().enumerate() {
             let dst_array = array_mut_ref![authentication_flat, 32 * i, 32];
             dst_array.copy_from_slice(src.as_ref());
         }
 
-        for (i, src) in self.services.iter().enumerate() {
-            sol_log("Packing services into account_data");
+        for (i, src) in services.iter().enumerate() {
             let dst_array = array_mut_ref![services_flat, 96 * i, 96];
 
-            let concatinated_service = [src.id, src.service_type, src.service_key].concat();
+            let concatinated_service =
+                [src.id, src.service_type, src.service_key.to_bytes()].concat();
             dst_array.copy_from_slice(concatinated_service.as_ref());
-            sol_log("Packed services into account_data");
         }
     }
 }
@@ -304,7 +304,7 @@ pub struct Service {
     /// service type represents the types of service e.g AMM_Licence or Bridge_Licence
     service_type: [u8; 32],
     /// service_key is the account where the service data is stored
-    service_key: [u8; 32],
+    service_key: Pubkey,
 }
 impl Service {
     /// I'm so hacky please refactor
@@ -314,7 +314,7 @@ impl Service {
         let (service_key, _) = rest.split_at(32);
         let id = cast_slice_as_array(id);
         let service_type = cast_slice_as_array(service_type);
-        let service_key = cast_slice_as_array(service_key);
+        let service_key = Pubkey::new(service_key);
         Service {
             id: id,
             service_type: service_type,
@@ -328,7 +328,7 @@ impl Service {
         let (service_key, _) = rest.split_at(32);
         let id = cast_slice_as_array(id);
         let service_type = cast_slice_as_array(service_type);
-        let service_key = cast_slice_as_array(service_key);
+        let service_key = Pubkey::new(service_key);
         Service {
             id: id,
             service_type: service_type,

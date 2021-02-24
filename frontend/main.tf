@@ -1,5 +1,5 @@
 variable "do_token" {
-  default = "4090efce742de6492901b892c6612974ee1eced22e7bfc5696580ff71b6291a8"
+  default = ""
 }
 
 variable "ssh_key_fingerprint" {

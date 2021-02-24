@@ -1,13 +1,29 @@
-const solana_web3 = require("@solana/web3.js");
-const lo = require("buffer-layout");
+import {
+  Account,
+  Transaction,
+  TransactionInstruction,
+  PublicKey,
+  Connection,
+  SystemProgram,
+  sendAndConfirmTransaction,
+} from "@solana/web3.js";
+import lo from "buffer-layout";
+import { values } from "ramda";
 
-const createLicense = async (connection, programId) => {
+const createService = async (
+  programIdString,
+  ownerAccount,
+  serviceId,
+  serviceType,
+  key
+) => {
   const lamports = 10 * 1000000000;
 
-  const account = new solana_web3.Account();
-  await connection.requestAirdrop(account.publicKey, lamports);
+  let connection = new Connection("https://devnet.solana.com", "singleGossip");
+  let programId = new PublicKey(programIdString);
+  ownerAccount = new Account(values(ownerAccount._keypair.secretKey));
 
-  const dataAccount = new solana_web3.Account();
+  const dataAccount = new Account();
 
   //console.log("Payer Account:", account.publicKey.toString());
   //console.log("Data Account:", dataAccount.publicKey.toString());
@@ -19,7 +35,7 @@ const createLicense = async (connection, programId) => {
     lo.cstr("subject"),
     lo.cstr("issuance_date"),
   ]);
-	const bufferBytes = 1 + 32 + 32 + 32 +32
+  const bufferBytes = 1 + 32 + 32 + 32 + 32;
   const data = Buffer.alloc(bufferBytes);
 
   dataLayout.encode(
@@ -38,10 +54,10 @@ const createLicense = async (connection, programId) => {
     numBytes
   );
 
-  const transaction = new solana_web3.Transaction();
+  const transaction = new Transaction();
   transaction.add(
-    solana_web3.SystemProgram.createAccount({
-      fromPubkey: account.publicKey,
+    SystemProgram.createAccount({
+      fromPubkey: ownerAccount.publicKey,
       newAccountPubkey: dataAccount.publicKey,
       lamports: rentExemption,
       space: numBytes,
@@ -49,10 +65,10 @@ const createLicense = async (connection, programId) => {
     })
   );
 
-  const instruction = new solana_web3.TransactionInstruction({
+  const instruction = new TransactionInstruction({
     keys: [
       {
-        pubkey: account.publicKey,
+        pubkey: ownerAccount.publicKey,
         isSigner: true,
         isWritable: false,
       },
@@ -68,38 +84,20 @@ const createLicense = async (connection, programId) => {
 
   transaction.add(instruction);
 
-  const result = await solana_web3.sendAndConfirmTransaction(
+  const result = await sendAndConfirmTransaction(
     connection,
     transaction,
-    [account, dataAccount],
+    [ownerAccount, dataAccount],
     {
       confirmations: 1,
       skipPreflight: true,
     }
   );
 
-  console.log("added licence");
-  await getAccountInfo(connection, dataAccount.publicKey);
-};
-
-const getAccountInfo = async (connection, pk) => {
-  if (!pk) {
-    console.log("pk not provided");
-    process.exit(1);
-  }
-
-  let account = await connection.getAccountInfo(pk);
-
-  let owner = new solana_web3.PublicKey(account.owner._bn);
-
-  console.log("Inspecting pk:", pk.toString());
-  console.log("Owner PubKey:", owner.toString());
-
-  if (!account) {
-    console.log("Account not found on chain");
-    process.exit(1);
-  }
-  decodeLicense(account.data);
+  return {
+    ownerAccount: ownerAccount.publicKey.toString(),
+    dataAccount: dataAccount.publicKey.toString(),
+  };
 };
 
 const decodeLicense = (buf) => {
@@ -111,23 +109,10 @@ const decodeLicense = (buf) => {
     lo.cstr("issuance_date"),
   ]);
   let data = dataLayout.decode(buf);
-//  let issuer = new solana_web3.PublicKey(data.issuer);
-console.log(data.issuer.toString());
+  //  let issuer = new PublicKey(data.issuer);
+  //console.log(data.issuer.toString());
   console.log(data);
+  return data;
 };
 
-const main = async () => {
-  connection = new solana_web3.Connection(
-    "http://localhost:8899",
-    "singleGossip"
-  );
-  let programId = new solana_web3.PublicKey(process.argv[2]);
-
-  await createLicense(connection, programId);
-};
-
-main();
-
-module.exports = {
-  getAccountInfo,
-};
+export { createService, decodeLicense };

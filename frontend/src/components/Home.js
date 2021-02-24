@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import Button from "@material-ui/core/Button";
@@ -9,6 +8,7 @@ import { decodePubkeys } from "../utils/add-authentication";
 import { decodeServices } from "../utils/add-service";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
+import Container from "@material-ui/core/Container";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -16,6 +16,8 @@ import { values } from "ramda";
 import { PublicKey } from "@solana/web3.js";
 import "./Home.css";
 import ReactLoading from "react-loading";
+import UserMenu from "./UserMenu";
+import HomeIcon from "@material-ui/icons/Home";
 
 const Home = () => {
   const [value] = useState();
@@ -23,6 +25,9 @@ const Home = () => {
   const [pubkeys, setPubkeys] = useState();
   const [services, setServices] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [dataAccount] = useState(
+    JSON.parse(localStorage.getItem("dataAccount"))
+  );
 
   // Similar to componentDidMount and componentDidUpdate:
   const getIdentifier = async () => {
@@ -35,7 +40,6 @@ const Home = () => {
       if (identifier) {
         setIdentifier(identifier);
         let pubkeys = decodePubkeys(identifier.authentication);
-        console.log(pubkeys);
         setPubkeys(pubkeys);
         let services = decodeServices(identifier.services);
         setServices(services);
@@ -46,10 +50,23 @@ const Home = () => {
 
   return (
     <Wrapper>
-      <Container maxWidth="md">
-        <div className="title">Query decentralized identifiers</div>
+      <Container maxWidth="ml">
+        <Paper elevation="10" className="card">
+          <Grid item xs={12} justify="center" className="headerGrid">
+            <Grid item xs={12}>
+              <div className="title">
+                Query decentralized identifiers (DIDs)
+              </div>
+            </Grid>
+            {dataAccount && (
+              <Grid item xs={2} justify="center" className="menuGrid">
+                <UserMenu refersh={identifier} />
+              </Grid>
+            )}
+          </Grid>
+        </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
-          <Paper className="spacing">
+          <Paper elevation="10" className="spacing card">
             <Grid container spacing={3}>
               <Grid
                 alignItems="center"
@@ -62,7 +79,7 @@ const Home = () => {
                   value={value}
                   id="standard-basic"
                   maxWidth="1000px"
-                  label="Enter a data key here to get a did"
+                  label="Please enter a data key here to get DID data..."
                   color="default"
                 />
               </Grid>
@@ -191,16 +208,14 @@ const Home = () => {
 const Wrapper = styled.div`
   min-height: calc(100vh - 50px);
   display: flex;
-  background-color: #333;
   flex-direction: column;
-  color: #fff;
 
   div.title {
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 35px;
     padding-top: 20px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
     text-align: center;
+    font-family: roboto;
   }
   div.subtitle {
     font-size: 30px;

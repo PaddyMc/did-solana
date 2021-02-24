@@ -3,15 +3,17 @@ const lo = require("buffer-layout");
 
 const addService = async (connection, programId, ownerAccount, dataAccount) => {
 //  console.log("Owner PubKey:", ownerAccount.publicKey.toString());
-  console.log("Data PubKey:", dataAccount.publicKey.toString());
+  let pubBuf = new solana_web3.PublicKey(dataAccount.publicKey.toString()).toBuffer()
+ // console.log("Service Data PubKey:", dataAccount.publicKey.toString());
 
-  const numBytes = 1 + 32 + 32 + 50;
+ // console.log(Buffer.byteLength(pubBuf))
+  const numBytes = 1 + 32 + 32 + 32;
   const data = Buffer.alloc(numBytes);
   const dataLayout = lo.struct([
     lo.u8("instruction"),
     lo.cstr("id"),
     lo.cstr("service_type"),
-    lo.cstr("service_key"),
+    lo.blob(32, "service_key"),
   ]);
 
 //  console.log(dataAccount.publicKey._bn)
@@ -21,7 +23,7 @@ const addService = async (connection, programId, ownerAccount, dataAccount) => {
       instruction: 2, // InitializeAddService instruction
       id: Buffer.from(`id-for-service`.padEnd(32).substring(0, 31)),
       service_type: Buffer.from(`Paddy`.padEnd(32).substring(0, 31)),
-      service_key: dataAccount.publicKey,
+      service_key: pubBuf,
     },
     data
   );
@@ -75,9 +77,11 @@ const decodeService = (buf) => {
   const dataLayout = lo.struct([
     lo.cstr("id"),
     lo.cstr("serviceType"),
-    lo.cstr("serviceKey"),
+    lo.blob(32,"serviceKey"),
   ]);
   let data = dataLayout.decode(buf);
+ // let key = new solana_web3.PublicKey(data.serviceKey)
+ // console.log(key.toString());
   console.log(data);
 };
 

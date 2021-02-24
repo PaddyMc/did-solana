@@ -40,7 +40,7 @@ pub fn process_instruction(
     }
 }
 
-/// Create a did document
+/// Create a license
 pub fn create_license(
     _: &Pubkey,
     accounts: &[AccountInfo],

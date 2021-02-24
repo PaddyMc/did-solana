@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
@@ -11,11 +11,20 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ReactLoading from "react-loading";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import { getAccountInfo } from "../utils/index";
+import { Account } from "@solana/web3.js";
+import { values } from "ramda";
+import UserMenu from "./UserMenu";
+import "./Home.css";
 
 const CreateDid = () => {
   const [value] = useState();
   const [identifier, setIdentifier] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [dataAccount, setDataAccount] = useState(
+    JSON.parse(localStorage.getItem("dataAccount"))
+  );
 
   // Similar to componentDidMount and componentDidUpdate:
   const getIdentifier = async () => {
@@ -28,18 +37,30 @@ const CreateDid = () => {
         "3zgomZzhRMyep8nBuCJA67ayMr7LScQtrGPTruS7wRHu",
         hacky
       );
-      setIsLoading(false);
       if (identifier) {
         setIdentifier(identifier);
+        setDataAccount(true);
       }
+      setIsLoading(false);
     }
   };
   return (
     <Wrapper>
-      <Container maxWidth="md">
-        <div className="title">Create decentralized identifier</div>
+      <Container maxWidth="ml">
+        <Paper elevation="10" className="card">
+        <Grid item xs={12} justify="center" className="headerGrid">
+          <Grid item xs={12}>
+            <div className="title">Create a decentralized identifier (DID)</div>
+          </Grid>
+          {dataAccount && (
+            <Grid item xs={2} justify="center" className="menuGrid">
+              <UserMenu refersh={identifier} />
+            </Grid>
+          )}
+        </Grid>
+        </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
-          <Paper className="spacing">
+          <Paper elevation="10" className="spacing card">
             <Grid container spacing={3}>
               <Grid
                 alignItems="center"
@@ -52,7 +73,7 @@ const CreateDid = () => {
                   value={value}
                   id="standard-basic"
                   maxWidth="1000px"
-                  label="Enter an aka (also known as) here  to create a did"
+                  label="Please enter an aka (also known as) here to create a DID..."
                   color="default"
                 />
               </Grid>
@@ -140,16 +161,14 @@ const CreateDid = () => {
 const Wrapper = styled.div`
   min-height: calc(100vh - 50px);
   display: flex;
-  background-color: #333;
   flex-direction: column;
-  color: #fff;
 
   div.title {
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 35px;
     padding-top: 20px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
     text-align: center;
+    font-family: roboto;
   }
   div.subtitle {
     font-size: 30px;

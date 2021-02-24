@@ -21,7 +21,6 @@ const createDid = async (connection, programId) => {
     lo.cstr("aka"),
   ]);
   const numBytes = 1 + 32 + 32 + 32 + 32 * 10 + 96 * 4;
-  console.log(numBytes);
   const data = Buffer.alloc(numBytes);
 
   dataLayout.encode(
@@ -82,9 +81,19 @@ const createDid = async (connection, programId) => {
 
   console.log("adding authentication");
   await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
+  await addAuthentication(connection, programId, account, dataAccount);
   console.log("added authentication");
-  await getAccountInfo(connection, dataAccount.publicKey);
   console.log("adding services");
+  await addService(connection, programId, account, dataAccount);
+  await addService(connection, programId, account, dataAccount);
+  await addService(connection, programId, account, dataAccount);
   await addService(connection, programId, account, dataAccount);
   console.log("added services");
   await getAccountInfo(connection, dataAccount.publicKey);

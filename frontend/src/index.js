@@ -3,11 +3,16 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import Header from "./components/Header";
 import Container from "./components/Container";
+import { Container as C } from "@material-ui/core";
+import ParticlesBg from "particles-bg";
 
 const App = () => (
   <Router>
-    <Header />
-    <Container />
+    <ParticlesBg color="#d117e7" type="cobweb" bg={true} />
+    <C maxWidth="lg">
+      <Header />
+      <Container />
+    </C>
   </Router>
 );
 

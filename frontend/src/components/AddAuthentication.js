@@ -10,6 +10,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ReactLoading from "react-loading";
+import UserMenu from "./UserMenu";
 
 const AddAuthentication = () => {
   const [account] = useState(JSON.parse(localStorage.getItem("account")));
@@ -36,12 +37,21 @@ const AddAuthentication = () => {
   };
   return (
     <Wrapper>
-      <Container maxWidth="md">
-        <div className="title">
-          Add a public key to your decentralized identifier
-        </div>
+      <Container maxWidth="ml">
+        <Paper elevation="10" className="card">
+        <Grid item xs={12} justify="center" className="headerGrid">
+          <Grid item xs={12}>
+            <div className="title">Add a public key to your DID</div>
+          </Grid>
+          {dataAccount && (
+            <Grid item xs={2} justify="center" className="menuGrid">
+              <UserMenu refersh={identifier} />
+            </Grid>
+          )}
+        </Grid>
+	  </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
-          <Paper className="spacing">
+          <Paper elevation="10" className="spacing card">
             <Grid justify="center" container spacing={3}>
               <Grid
                 item
@@ -131,16 +141,14 @@ const AddAuthentication = () => {
 const Wrapper = styled.div`
   min-height: calc(100vh - 50px);
   display: flex;
-  background-color: #333;
   flex-direction: column;
-  color: #fff;
 
   div.title {
-    font-size: 40px;
-    font-weight: bold;
+    font-size: 35px;
     padding-top: 20px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
     text-align: center;
+    font-family: roboto;
   }
   div.subtitle {
     font-size: 30px;
