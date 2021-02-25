@@ -9,6 +9,9 @@ const createLicense = async (connection, programId) => {
 
   const dataAccount = new solana_web3.Account();
 
+  let pubBuf = new solana_web3.PublicKey(
+    dataAccount.publicKey.toString()
+  ).toBuffer();
   //console.log("Payer Account:", account.publicKey.toString());
   //console.log("Data Account:", dataAccount.publicKey.toString());
 
@@ -16,19 +19,20 @@ const createLicense = async (connection, programId) => {
     lo.u8("instruction"),
     lo.cstr("id"),
     lo.cstr("service_type"),
-    lo.cstr("subject"),
+    lo.blob(32, "subject"),
     lo.cstr("issuance_date"),
   ]);
-	const bufferBytes = 1 + 32 + 32 + 32 +32
+  const bufferBytes = 1 + 32 + 32 + 32 + 32;
   const data = Buffer.alloc(bufferBytes);
+  let d = new Date();
 
   dataLayout.encode(
     {
       instruction: 0, // InitializeCreateLicense instruction
-      id: Buffer.from("my-id"),
-      service_type: Buffer.from(`AMM License`.substring(0, 31)),
-      subject: Buffer.from(`Paddy`.padEnd(32).substring(0, 31)),
-      issuance_date: Buffer.from(`13/11/11`.padEnd(32).substring(0, 31)),
+      id: Buffer.from("my-id".padEnd(32).substring(0, 31)),
+      service_type: Buffer.from("AMM License".padEnd(32).substring(0, 31)),
+      subject: pubBuf,
+      issuance_date: Buffer.from(d.toString().padEnd(32).substring(0, 31)),
     },
     data
   );
@@ -106,19 +110,17 @@ const decodeLicense = (buf) => {
   const dataLayout = lo.struct([
     lo.cstr("id"),
     lo.cstr("service_type"),
-    lo.cstr("subject"),
+    lo.blob(32, "subject"),
     lo.blob(32, "issuer"),
     lo.cstr("issuance_date"),
   ]);
   let data = dataLayout.decode(buf);
-//  let issuer = new solana_web3.PublicKey(data.issuer);
-console.log(data.issuer.toString());
   console.log(data);
 };
 
 const main = async () => {
   connection = new solana_web3.Connection(
-    "http://localhost:8899",
+    "https://devnet.solana.com",
     "singleGossip"
   );
   let programId = new solana_web3.PublicKey(process.argv[2]);

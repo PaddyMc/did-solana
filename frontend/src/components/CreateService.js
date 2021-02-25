@@ -17,6 +17,7 @@ import FormControl from "@material-ui/core/FormControl";
 import UserMenu from "./UserMenu";
 import "./AddService.css";
 import ReactLoading from "react-loading";
+import config from "../config.js"
 
 const CreateService = () => {
   const [value] = useState();
@@ -40,7 +41,7 @@ const CreateService = () => {
       setIsLoading(true);
       setIdentifier();
       let identifier = await createService(
-        "3zgomZzhRMyep8nBuCJA67ayMr7LScQtrGPTruS7wRHu",
+        config().licenceProgramId,
         account,
         dataAccount,
         id,
@@ -59,7 +60,7 @@ const CreateService = () => {
         <Paper elevation="10" className="card">
         <Grid item xs={12} justify="center" className="headerGrid">
           <Grid item xs={12}>
-            <div className="title">Create a new service</div>
+            <div className="title">Create Service</div>
           </Grid>
           {dataAccount && (
             <Grid item xs={2} justify="center" className="menuGrid">
@@ -70,6 +71,7 @@ const CreateService = () => {
 	  </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
+            <div className="subtitle">Create a new service</div>
             <Grid container justify="center" spacing={6}>
               <Grid
                 alignItems="center"
@@ -152,7 +154,7 @@ const CreateService = () => {
                       color="textSecondary"
                       gutterBottom
                     >
-                      Data account (Use this to query data in the Home tab)
+                      Data account (Use this to add a service to a DID in the `Add Service` tab)
                     </Typography>
                     <Typography variant="h5" component="h2" gutterBottom>
                       {identifier && identifier.dataAccount}
@@ -166,16 +168,6 @@ const CreateService = () => {
                     </Typography>
                     <Typography variant="h5" component="h2" gutterBottom>
                       {identifier && identifier.ownerAccount}
-                    </Typography>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Service Data Key
-                    </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
-                      {identifier && identifier.serviceAccount}
                     </Typography>
                   </CardContent>
                 </Card>
@@ -202,7 +194,9 @@ const Wrapper = styled.div`
   }
   div.subtitle {
     font-size: 30px;
-    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-family: roboto;
   }
 `;
 

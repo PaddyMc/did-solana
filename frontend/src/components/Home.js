@@ -55,7 +55,7 @@ const Home = () => {
           <Grid item xs={12} justify="center" className="headerGrid">
             <Grid item xs={12}>
               <div className="title">
-                Query decentralized identifiers (DIDs)
+                Home
               </div>
             </Grid>
             {dataAccount && (
@@ -67,6 +67,9 @@ const Home = () => {
         </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
+              <div className="subtitle">
+                Query decentralized identifiers (DIDs)
+              </div>
             <Grid container spacing={3}>
               <Grid
                 alignItems="center"
@@ -93,6 +96,7 @@ const Home = () => {
               >
                 <Button
                   variant="contained"
+                  color="secondary"
                   onClick={() => getIdentifier()}
                   startIcon={<AssignmentIndIcon />}
                 >
@@ -108,7 +112,7 @@ const Home = () => {
                 alignItems="center"
                 spacing={3}
               >
-                <ReactLoading type={"bars"} color={"grey"} />
+                <ReactLoading type={"bars"} color={"#d117e7"} />
               </Grid>
             )}
             {identifier && (
@@ -219,7 +223,9 @@ const Wrapper = styled.div`
   }
   div.subtitle {
     font-size: 30px;
-    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-family: roboto;
   }
 `;
 

@@ -41,6 +41,12 @@
   align-self: center !important;
   justify-self: center !important;
 }
+.menuicon {
+  align-self: center !important;
+  justify-self: center !important;
+  cursor: pointer;
+  color: #00ffbd;
+}
 
 .card {
   background-color: #f5f5f5;
@@ -59,4 +65,8 @@
   margin-top: 40px;
   padding-top: 20px;
   padding-bottom: 20px;
+}
+
+.menuText {
+  font-family: roboto;
 }

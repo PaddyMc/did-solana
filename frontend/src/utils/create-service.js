@@ -8,6 +8,7 @@ import {
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
 import lo from "buffer-layout";
+import {getAccountInfo} from "./index";
 import { values } from "ramda";
 
 const createService = async (
@@ -93,6 +94,9 @@ const createService = async (
       skipPreflight: true,
     }
   );
+  let account = await connection.getAccountInfo(dataAccount.publicKey);	
+	console.log(account)
+	decodeLicense(Buffer.from(account.data))
 
   return {
     ownerAccount: ownerAccount.publicKey.toString(),
@@ -109,8 +113,6 @@ const decodeLicense = (buf) => {
     lo.cstr("issuance_date"),
   ]);
   let data = dataLayout.decode(buf);
-  //  let issuer = new PublicKey(data.issuer);
-  //console.log(data.issuer.toString());
   console.log(data);
   return data;
 };

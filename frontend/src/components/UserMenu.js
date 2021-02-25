@@ -5,18 +5,21 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { getAccountInfo } from "../utils/index";
 import { Account } from "@solana/web3.js";
 import { values } from "ramda";
+import Tooltip from '@material-ui/core/Tooltip';
 import "./Home.css";
 
 const UserMenu = (refresh) => {
   const [aka, setAka] = useState();
+  const [pk, setPk] = useState();
 
   useEffect(async () => {
     let dataAccount = JSON.parse(localStorage.getItem("dataAccount"));
     if (dataAccount) {
+        let publicKey = new Account(values(dataAccount._keypair.secretKey)).publicKey.toString()
       const aka = await getAccountInfo(
-        new Account(values(dataAccount._keypair.secretKey)).publicKey.toString()
+        publicKey
       );
-
+setPk(publicKey)
       setAka(aka.aka);
     }
   });
@@ -25,9 +28,11 @@ const UserMenu = (refresh) => {
     <Fragment>
       {aka && (
         <Fragment>
-          <AccountCircleIcon color="#00ffbd" className="icon" />
+	      <Tooltip title={pk} interactive>
+          <AccountCircleIcon className="menuicon" />
+</Tooltip>
           <Fragment>
-            <Typography> {aka}</Typography>
+            <Typography className="menuText">{aka}</Typography>
           </Fragment>
         </Fragment>
       )}

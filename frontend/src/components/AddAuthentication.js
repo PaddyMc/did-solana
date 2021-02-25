@@ -11,6 +11,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ReactLoading from "react-loading";
 import UserMenu from "./UserMenu";
+import config from "../config"
 
 const AddAuthentication = () => {
   const [account] = useState(JSON.parse(localStorage.getItem("account")));
@@ -26,7 +27,7 @@ const AddAuthentication = () => {
     setIdentifier();
     // Update the document title using the browser API
     let identifier = await addAuthentication(
-      "3zgomZzhRMyep8nBuCJA67ayMr7LScQtrGPTruS7wRHu",
+      config().identifierProgramId,
       account,
       dataAccount
     );
@@ -41,7 +42,7 @@ const AddAuthentication = () => {
         <Paper elevation="10" className="card">
         <Grid item xs={12} justify="center" className="headerGrid">
           <Grid item xs={12}>
-            <div className="title">Add a public key to your DID</div>
+            <div className="title">Add Authentication</div>
           </Grid>
           {dataAccount && (
             <Grid item xs={2} justify="center" className="menuGrid">
@@ -52,6 +53,7 @@ const AddAuthentication = () => {
 	  </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
+            <div className="subtitle">Add a public key to your DID</div>
             <Grid justify="center" container spacing={3}>
               <Grid
                 item
@@ -84,7 +86,7 @@ const AddAuthentication = () => {
                 alignItems="center"
                 spacing={3}
               >
-                <ReactLoading type={"bars"} color={"grey"} />
+                <ReactLoading type={"bars"} color={"#d117e7"} />
               </Grid>
             )}
             {identifier && (
@@ -152,7 +154,9 @@ const Wrapper = styled.div`
   }
   div.subtitle {
     font-size: 30px;
-    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-family: roboto;
   }
 `;
 

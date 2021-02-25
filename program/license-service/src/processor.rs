@@ -46,7 +46,7 @@ pub fn create_license(
     accounts: &[AccountInfo],
     id: [u8; 32],
     service_type: [u8; 32],
-    subject: [u8; 32],
+    subject: Pubkey,
     issuance_date: [u8; 32],
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
@@ -82,7 +82,7 @@ pub enum LicenseServiceInstruction {
         /// service type defines the type of service the license is for
         service_type: [u8; 32],
         /// subject represent the data about the subject
-        subject: [u8; 32],
+        subject: Pubkey,
         /// issuance_date re
         issuance_date: [u8; 32],
     },
@@ -97,13 +97,13 @@ impl LicenseServiceInstruction {
             0 => {
                 sol_log("Decoding LicenseService instruction_data");
                 let (id, _rest) = rest.split_at(32);
-                let (service_type, _rest) = rest.split_at(32);
+                let (service_type, _rest) = _rest.split_at(32);
                 let (subject, _rest) = _rest.split_at(32);
                 let (issuance_date, _rest) = _rest.split_at(32);
 
                 let id = cast_slice_as_array(id);
                 let service_type = cast_slice_as_array(service_type);
-                let subject = cast_slice_as_array(subject);
+                let subject = Pubkey::new(subject);
                 let issuance_date = cast_slice_as_array(issuance_date);
                 Self::CreateLicense {
                     id,
@@ -121,11 +121,9 @@ impl LicenseServiceInstruction {
 /// State
 ///
 
-/// The repository should store all data
-/// related to a sevice license.
-/// https://www.w3.org/TR/vc-data-model/
+/// The structure should store all data
+/// related to a license sevice
 /// {
-///  "@context": "",
 ///  "id": "http://example.edu/credentials/1872",
 ///  "type": "VerifiableCredential",,
 ///  "subject": "amm pub key",,
@@ -142,7 +140,7 @@ pub struct LicenseService {
     /// service type defines the type of service the license is for
     service_type: [u8; 32],
     /// subject represent the data about the subject
-    subject: [u8; 32],
+    subject: Pubkey,
     /// issuer denotes the public key of the issuer of the license
     issuer: Pubkey,
     /// issuance_date re
@@ -157,7 +155,7 @@ impl Pack for LicenseService {
             array_refs![src, 32, 32, 32, 32, 32];
         let id = cast_slice_as_array(id);
         let service_type = cast_slice_as_array(service_type);
-        let subject = cast_slice_as_array(subject);
+        let subject = Pubkey::new(subject);
         let issuer = Pubkey::new(issuer);
         let issuance_date = cast_slice_as_array(issuance_date);
         let license = LicenseService {
@@ -184,7 +182,7 @@ impl Pack for LicenseService {
         } = self;
         *id_dst = id;
         *service_type_dst = service_type;
-        *subject_dst = subject;
+        *subject_dst = cast_slice_as_array(subject.as_ref());
         *issuer_dst = cast_slice_as_array(issuer.as_ref());
         *issuance_date_dst = issuance_date;
     }

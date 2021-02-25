@@ -81,20 +81,20 @@ const createDid = async (connection, programId) => {
 
   console.log("adding authentication");
   await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
-  await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
+ // await addAuthentication(connection, programId, account, dataAccount);
   console.log("added authentication");
   console.log("adding services");
   await addService(connection, programId, account, dataAccount);
-  await addService(connection, programId, account, dataAccount);
-  await addService(connection, programId, account, dataAccount);
-  await addService(connection, programId, account, dataAccount);
+ // await addService(connection, programId, account, dataAccount);
+ // await addService(connection, programId, account, dataAccount);
+ // await addService(connection, programId, account, dataAccount);
   console.log("added services");
   await getAccountInfo(connection, dataAccount.publicKey);
 };
@@ -135,7 +135,7 @@ const decodeDid = (buf) => {
 
 const main = async () => {
   connection = new solana_web3.Connection(
-    "http://localhost:8899",
+    "https://devnet.solana.com",
     "singleGossip"
   );
   let programId = new solana_web3.PublicKey(process.argv[2]);

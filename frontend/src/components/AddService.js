@@ -17,6 +17,7 @@ import FormControl from "@material-ui/core/FormControl";
 import UserMenu from "./UserMenu";
 import "./AddService.css";
 import ReactLoading from "react-loading";
+import config from "../config"
 
 const AddService = () => {
   const [value] = useState();
@@ -40,7 +41,7 @@ const AddService = () => {
       setIsLoading(true);
       setIdentifier();
       let identifier = await addService(
-        "3zgomZzhRMyep8nBuCJA67ayMr7LScQtrGPTruS7wRHu",
+        config().identifierProgramId,
         account,
         dataAccount,
         id,
@@ -59,7 +60,7 @@ const AddService = () => {
         <Paper elevation="10" className="card">
         <Grid item xs={12} justify="center" className="headerGrid">
           <Grid item xs={12}>
-            <div className="title">Add a service to your DID</div>
+            <div className="title">Add Service</div>
           </Grid>
           {dataAccount && (
             <Grid item xs={2} justify="center" className="menuGrid">
@@ -70,6 +71,7 @@ const AddService = () => {
 	  </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
+            <div className="subtitle">Add a service to your DID</div>
             <Grid container justify="center" spacing={6}>
               <Grid
                 alignItems="center"
@@ -133,7 +135,7 @@ const AddService = () => {
                 alignItems="center"
                 spacing={3}
               >
-                <ReactLoading type={"bars"} color={"grey"} />
+                <ReactLoading type={"bars"} color={"#d117e7"} />
               </Grid>
             )}
             {identifier && (
@@ -201,7 +203,9 @@ const Wrapper = styled.div`
   }
   div.subtitle {
     font-size: 30px;
-    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-family: roboto;
   }
 `;
 

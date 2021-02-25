@@ -33,7 +33,7 @@ const createDid = async (programIdString, aka) => {
 
   const numBytes = 1 + 32 + 32 + 32 + 32 * 10 + 96 * 4;
 
-  console.log(numBytes);
+  //console.log(numBytes);
   const data = Buffer.alloc(numBytes);
 
   dataLayout.encode(
@@ -148,7 +148,7 @@ const decodeDid = (buf) => {
     lo.blob(384, "services"),
   ]);
   const data = dataLayout.decode(buf);
-  console.log(data);
+  //console.log(data);
   return data;
 };
 

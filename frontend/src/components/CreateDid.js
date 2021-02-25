@@ -15,8 +15,10 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { getAccountInfo } from "../utils/index";
 import { Account } from "@solana/web3.js";
 import { values } from "ramda";
+import Divider from '@material-ui/core/Divider';
 import UserMenu from "./UserMenu";
 import "./Home.css";
+import config from "../config"
 
 const CreateDid = () => {
   const [value] = useState();
@@ -34,7 +36,7 @@ const CreateDid = () => {
       setIsLoading(true);
       setIdentifier();
       let identifier = await createDid(
-        "3zgomZzhRMyep8nBuCJA67ayMr7LScQtrGPTruS7wRHu",
+        config().identifierProgramId,
         hacky
       );
       if (identifier) {
@@ -50,7 +52,7 @@ const CreateDid = () => {
         <Paper elevation="10" className="card">
         <Grid item xs={12} justify="center" className="headerGrid">
           <Grid item xs={12}>
-            <div className="title">Create a decentralized identifier (DID)</div>
+            <div className="title">Create Identifier</div>
           </Grid>
           {dataAccount && (
             <Grid item xs={2} justify="center" className="menuGrid">
@@ -62,6 +64,7 @@ const CreateDid = () => {
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
             <Grid container spacing={3}>
+            <div className="subtitle">Create a decentralized identifier (DID)</div>
               <Grid
                 alignItems="center"
                 align="center"
@@ -87,6 +90,7 @@ const CreateDid = () => {
               >
                 <Button
                   variant="contained"
+	         color="secondary" 
                   onClick={() => getIdentifier()}
                   startIcon={<AddIcon />}
                 >
@@ -102,7 +106,7 @@ const CreateDid = () => {
                 alignItems="center"
                 spacing={3}
               >
-                <ReactLoading type={"bars"} color={"grey"} />
+                <ReactLoading type={"bars"} color={"#d117e7"} />
               </Grid>
             )}
             {identifier && (
@@ -172,7 +176,10 @@ const Wrapper = styled.div`
   }
   div.subtitle {
     font-size: 30px;
-    font-weight: bold;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    font-family: roboto;
   }
 `;
 export default CreateDid;
