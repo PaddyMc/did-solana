@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
@@ -17,7 +17,7 @@ import FormControl from "@material-ui/core/FormControl";
 import UserMenu from "./UserMenu";
 import "./AddService.css";
 import ReactLoading from "react-loading";
-import config from "../config"
+import config from "../config";
 
 const AddService = () => {
   const [value] = useState();
@@ -58,20 +58,22 @@ const AddService = () => {
     <Wrapper>
       <Container maxWidth="ml">
         <Paper elevation="10" className="card">
-        <Grid item xs={12} justify="center" className="headerGrid">
-          <Grid item xs={12}>
-            <div className="title">Add Service</div>
-          </Grid>
-          {dataAccount && (
-            <Grid item xs={2} justify="center" className="menuGrid">
-              <UserMenu refersh={identifier} />
+          <Grid item xs={12} justify="center" className="headerGrid">
+            <Grid item xs={12}>
+              <div className="title">Add Service</div>
             </Grid>
-          )}
-        </Grid>
-	  </Paper>
+            {dataAccount && (
+              <Grid item xs={2} justify="center" className="menuGrid">
+                <UserMenu refersh={identifier} />
+              </Grid>
+            )}
+          </Grid>
+        </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
             <div className="subtitle">Add a service to your DID</div>
+                {!!account ? (
+	  <Fragment>
             <Grid container justify="center" spacing={6}>
               <Grid
                 alignItems="center"
@@ -83,50 +85,66 @@ const AddService = () => {
                 <TextField
                   value={value}
                   id="standard-id"
+		  className="inputs"
                   maxWidth="1000px"
-                  label="Enter an id of the service here"
+                  label="Please enter an id of the service here..."
                   color="default"
                 />
-                <FormControl className="buttonServicePage">
-                  <InputLabel id="label">Service Type</InputLabel>
+                <FormControl
+		  className="inputs"
+			>
+                  <InputLabel id="label">
+                    Please enter a service type...
+                  </InputLabel>
                   <Select
                     labelId="label"
                     id="select"
                     value={type}
                     onChange={handleChange}
                   >
-                    <MenuItem value={"amm licence"}>AMM Licence</MenuItem>
-                    <MenuItem value={"bridge licence"}>Bridge Licence</MenuItem>
-                    <MenuItem value={"did document"}>DID Document</MenuItem>
+                    <MenuItem value={"AMM Licence"}>AMM Licence</MenuItem>
+                    <MenuItem value={"Bridge Licence"}>Bridge Licence</MenuItem>
+                    <MenuItem value={"Generic Licence"}>
+                      Generic Licence
+                    </MenuItem>
+                    <MenuItem value={"DID Document"}>DID Document</MenuItem>
                   </Select>
                 </FormControl>
                 <TextField
                   value={value}
-                  className="buttonServicePage"
                   id="standard-key"
+		  className="inputs"
                   maxWidth="1000px"
-                  label="Enter the data key of the service here (will be used to get data)"
+                  label="Please enter the data key of the service here (will be used to get data)..."
                   color="default"
                 />
+                <Grid
+                  item
+                  alignItems="center"
+                  justify="flex-end"
+                  align="center"
+                  className="button"
+                >
+                  <Button
+                    className="buttonServicePage"
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => getIdentifier()}
+                    startIcon={<AddIcon />}
+                  >
+                    Add Service
+                  </Button>
+                </Grid>
               </Grid>
             </Grid>
-            <Grid
-              item
-              alignItems="center"
-              justify="flex-end"
-              align="center"
-              className="button"
-              xs={10}
-            >
-              <Button
-                className="buttonServicePage"
-                variant="contained"
-                onClick={() => getIdentifier()}
-                startIcon={<AddIcon />}
-              >
-                Add Service
-              </Button>
-            </Grid>
+	  </Fragment>
+                ) : (
+			<Grid justify="center" className="flex">
+                  <Typography className="title flex" color="textSecondary">
+                    Please create an identifier in the "Create Identifier" tab
+                  </Typography>
+			</Grid>
+                )}
             {isLoading && (
               <Grid
                 container
@@ -155,7 +173,7 @@ const AddService = () => {
                     >
                       Data account (Use this to query data in the Home tab)
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.dataAccount}
                     </Typography>
                     <Typography
@@ -165,7 +183,7 @@ const AddService = () => {
                     >
                       Your account address
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.ownerAccount}
                     </Typography>
                     <Typography
@@ -175,7 +193,7 @@ const AddService = () => {
                     >
                       Service Data Key
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.serviceAccount}
                     </Typography>
                   </CardContent>

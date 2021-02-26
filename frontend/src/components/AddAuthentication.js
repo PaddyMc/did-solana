@@ -11,7 +11,8 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import ReactLoading from "react-loading";
 import UserMenu from "./UserMenu";
-import config from "../config"
+import "./Home.css";
+import config from "../config";
 
 const AddAuthentication = () => {
   const [account] = useState(JSON.parse(localStorage.getItem("account")));
@@ -40,17 +41,17 @@ const AddAuthentication = () => {
     <Wrapper>
       <Container maxWidth="ml">
         <Paper elevation="10" className="card">
-        <Grid item xs={12} justify="center" className="headerGrid">
-          <Grid item xs={12}>
-            <div className="title">Add Authentication</div>
-          </Grid>
-          {dataAccount && (
-            <Grid item xs={2} justify="center" className="menuGrid">
-              <UserMenu refersh={identifier} />
+          <Grid item xs={12} justify="center" className="headerGrid">
+            <Grid item xs={12}>
+              <div className="title">Add Authentication</div>
             </Grid>
-          )}
-        </Grid>
-	  </Paper>
+            {dataAccount && (
+              <Grid item xs={2} justify="center" className="menuGrid">
+                <UserMenu refersh={identifier} />
+              </Grid>
+            )}
+          </Grid>
+        </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
             <div className="subtitle">Add a public key to your DID</div>
@@ -65,7 +66,9 @@ const AddAuthentication = () => {
               >
                 {!!account ? (
                   <Button
+                    className="buttonServicePage"
                     variant="contained"
+                    color="secondary"
                     onClick={() => getIdentifier()}
                     startIcon={<AddIcon />}
                   >
@@ -106,7 +109,7 @@ const AddAuthentication = () => {
                     >
                       Data account (Use this to query data in the Home tab)
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.dataAccount}
                     </Typography>
                     <Typography
@@ -116,7 +119,7 @@ const AddAuthentication = () => {
                     >
                       Your account address
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.ownerAccount}
                     </Typography>
                     <Typography
@@ -126,7 +129,7 @@ const AddAuthentication = () => {
                     >
                       Newly added account address
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.newAccount}
                     </Typography>
                   </CardContent>

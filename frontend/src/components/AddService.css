@@ -1,4 +1,11 @@
 .buttonServicePage {
-  margin-top: 25px !important;
+  margin-top: 40px !important;
   margin-bottom: 10px !important;
+}
+
+.flex {
+  display: flex;
+}
+.inputs {
+  margin-top: 25px !important;
 }

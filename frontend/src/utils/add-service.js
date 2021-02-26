@@ -33,8 +33,17 @@ const addService = async (
     lo.u8("instruction"),
     lo.cstr("id"),
     lo.cstr("service_type"),
-    lo.cstr("service_key"),
+    lo.blob(32, "service_key"),
   ]);
+  let pubBuf;
+  try {
+    pubBuf = new PublicKey(serviceDataKey).toBuffer();
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+
+  console.log(pubBuf);
 
   //  console.log(dataAccount.publicKey._bn)
   //  console.log(Buffer.byteLength(dataAccount.publicKey.toString()))
@@ -43,7 +52,7 @@ const addService = async (
       instruction: 2, // InitializeAddService instruction
       id: Buffer.from(serviceId.padEnd(32).substring(0, 31)),
       service_type: Buffer.from(serviceType.padEnd(32).substring(0, 31)),
-      service_key: Buffer.from(serviceDataKey.padEnd(32).substring(0, 31)),
+      service_key: Buffer.from(pubBuf),
     },
     data
   ); //new PublicKey(serviceDataKey).toBuffer()
@@ -94,14 +103,20 @@ const decodeServices = (buf) => {
   let ser2 = decodeService(data.service2);
   let ser3 = decodeService(data.service3);
   let ser4 = decodeService(data.service4);
-  return [ser1, ser2, ser3, ser4];
+
+  return [
+    new PublicKey(ser1.serviceKey).toString(),
+    new PublicKey(ser2.serviceKey).toString(),
+    new PublicKey(ser3.serviceKey).toString(),
+    new PublicKey(ser4.serviceKey).toString(),
+  ];
 };
 
 const decodeService = (buf) => {
   const dataLayout = lo.struct([
     lo.cstr("id"),
     lo.cstr("serviceType"),
-    lo.cstr("serviceKey"),
+    lo.blob(32, "serviceKey"),
   ]);
   let data = dataLayout.decode(buf);
   return data;

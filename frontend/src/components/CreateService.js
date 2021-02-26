@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import { Container } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
@@ -17,7 +17,7 @@ import FormControl from "@material-ui/core/FormControl";
 import UserMenu from "./UserMenu";
 import "./AddService.css";
 import ReactLoading from "react-loading";
-import config from "../config.js"
+import config from "../config.js";
 
 const CreateService = () => {
   const [value] = useState();
@@ -43,7 +43,6 @@ const CreateService = () => {
       let identifier = await createService(
         config().licenceProgramId,
         account,
-        dataAccount,
         id,
         type,
         key
@@ -58,20 +57,22 @@ const CreateService = () => {
     <Wrapper>
       <Container maxWidth="ml">
         <Paper elevation="10" className="card">
-        <Grid item xs={12} justify="center" className="headerGrid">
-          <Grid item xs={12}>
-            <div className="title">Create Service</div>
-          </Grid>
-          {dataAccount && (
-            <Grid item xs={2} justify="center" className="menuGrid">
-              <UserMenu refersh={identifier} />
+          <Grid item xs={12} justify="center" className="headerGrid">
+            <Grid item xs={12}>
+              <div className="title">Create Service</div>
             </Grid>
-          )}
-        </Grid>
-	  </Paper>
+            {dataAccount && (
+              <Grid item xs={2} justify="center" className="menuGrid">
+                <UserMenu refersh={identifier} />
+              </Grid>
+            )}
+          </Grid>
+        </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
             <div className="subtitle">Create a new service</div>
+                {!!account ? (
+	  <Fragment>
             <Grid container justify="center" spacing={6}>
               <Grid
                 alignItems="center"
@@ -83,11 +84,15 @@ const CreateService = () => {
                 <TextField
                   value={value}
                   id="standard-id"
+		  className="inputs"
                   maxWidth="1000px"
                   label="Please enter an id here..."
                   color="default"
                 />
-                <FormControl className="buttonServicePage">
+                <FormControl
+			
+		  className="inputs"
+			>
                   <InputLabel id="label">
                     Please select a service type...
                   </InputLabel>
@@ -99,11 +104,14 @@ const CreateService = () => {
                   >
                     <MenuItem value={"AMM License"}>AMM Licence</MenuItem>
                     <MenuItem value={"Bridge License"}>Bridge Licence</MenuItem>
-                    <MenuItem value={"DID document"}>DID Document</MenuItem>
+                    <MenuItem value={"Generic License"}>
+                      Generic License
+                    </MenuItem>
                   </Select>
                 </FormControl>
                 <TextField
                   value={value}
+		  className="inputs"
                   id="standard-key"
                   maxWidth="1000px"
                   label="Please enter the public key or program id of the subject..."
@@ -120,14 +128,23 @@ const CreateService = () => {
               xs={10}
             >
               <Button
-                className="buttonServicePage"
                 variant="contained"
+                className="buttonServicePage"
+                color="secondary"
                 onClick={() => getIdentifier()}
                 startIcon={<AddIcon />}
               >
                 Create Service
               </Button>
             </Grid>
+	  </Fragment>
+                ) : (
+			<Grid justify="center" className="flex">
+                  <Typography className="title flex" color="textSecondary">
+                    Please create an identifier in the "Create Identifier" tab
+                  </Typography>
+			</Grid>
+                )}
             {isLoading && (
               <Grid
                 container
@@ -136,7 +153,7 @@ const CreateService = () => {
                 alignItems="center"
                 spacing={3}
               >
-                <ReactLoading type={"bars"} color={"grey"} />
+                <ReactLoading type={"bars"} color={"#d117e7"} />
               </Grid>
             )}
             {identifier && (
@@ -154,9 +171,10 @@ const CreateService = () => {
                       color="textSecondary"
                       gutterBottom
                     >
-                      Data account (Use this to add a service to a DID in the `Add Service` tab)
+                      Data account (Use this to add a service to a DID in the
+                      `Add Service` tab)
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.dataAccount}
                     </Typography>
                     <Typography
@@ -166,8 +184,58 @@ const CreateService = () => {
                     >
                       Your account address
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.ownerAccount}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Service Id
+                    </Typography>
+                    <Typography component="p" gutterBottom>
+                      {identifier && identifier.id}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Service Type
+                    </Typography>
+                    <Typography component="p" gutterBottom>
+                      {identifier && identifier.serviceType}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Subject of the license
+                    </Typography>
+                    <Typography component="p" gutterBottom>
+                      {identifier && identifier.subject}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Issuer of the license
+                    </Typography>
+                    <Typography component="p" gutterBottom>
+                      {identifier && identifier.issuer}
+                    </Typography>
+                    <Typography
+                      className="title"
+                      color="textSecondary"
+                      gutterBottom
+                    >
+                      Date the license was issued
+                    </Typography>
+                    <Typography component="p" gutterBottom>
+                      {identifier && identifier.issuanceDate}
                     </Typography>
                   </CardContent>
                 </Card>

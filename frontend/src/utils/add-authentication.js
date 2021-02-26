@@ -65,7 +65,7 @@ const addAuthentication = async (
     skipPreflight: true,
   }).catch((error) => {
     console.log(error);
-    return false
+    return false;
   });
 
   return {

@@ -15,10 +15,10 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { getAccountInfo } from "../utils/index";
 import { Account } from "@solana/web3.js";
 import { values } from "ramda";
-import Divider from '@material-ui/core/Divider';
+import Divider from "@material-ui/core/Divider";
 import UserMenu from "./UserMenu";
 import "./Home.css";
-import config from "../config"
+import config from "../config";
 
 const CreateDid = () => {
   const [value] = useState();
@@ -35,10 +35,7 @@ const CreateDid = () => {
     if (hacky) {
       setIsLoading(true);
       setIdentifier();
-      let identifier = await createDid(
-        config().identifierProgramId,
-        hacky
-      );
+      let identifier = await createDid(config().identifierProgramId, hacky);
       if (identifier) {
         setIdentifier(identifier);
         setDataAccount(true);
@@ -50,21 +47,23 @@ const CreateDid = () => {
     <Wrapper>
       <Container maxWidth="ml">
         <Paper elevation="10" className="card">
-        <Grid item xs={12} justify="center" className="headerGrid">
-          <Grid item xs={12}>
-            <div className="title">Create Identifier</div>
-          </Grid>
-          {dataAccount && (
-            <Grid item xs={2} justify="center" className="menuGrid">
-              <UserMenu refersh={identifier} />
+          <Grid item xs={12} justify="center" className="headerGrid">
+            <Grid item xs={12}>
+              <div className="title">Create Identifier</div>
             </Grid>
-          )}
-        </Grid>
+            {dataAccount && (
+              <Grid item xs={2} justify="center" className="menuGrid">
+                <UserMenu refersh={identifier} />
+              </Grid>
+            )}
+          </Grid>
         </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
+            <div className="subtitle">
+              Create a decentralized identifier (DID)
+            </div>
             <Grid container spacing={3}>
-            <div className="subtitle">Create a decentralized identifier (DID)</div>
               <Grid
                 alignItems="center"
                 align="center"
@@ -90,7 +89,7 @@ const CreateDid = () => {
               >
                 <Button
                   variant="contained"
-	         color="secondary" 
+                  color="secondary"
                   onClick={() => getIdentifier()}
                   startIcon={<AddIcon />}
                 >
@@ -126,7 +125,7 @@ const CreateDid = () => {
                     >
                       Data account (Use this to query data in the Home tab)
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.dataAccount}
                     </Typography>
                     <Typography
@@ -136,7 +135,7 @@ const CreateDid = () => {
                     >
                       Your account address
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography component="p" gutterBottom>
                       {identifier && identifier.ownerAccount}
                     </Typography>
 
@@ -177,7 +176,6 @@ const Wrapper = styled.div`
   div.subtitle {
     font-size: 30px;
     padding-top: 10px;
-    padding-left: 10px;
     padding-bottom: 10px;
     font-family: roboto;
   }

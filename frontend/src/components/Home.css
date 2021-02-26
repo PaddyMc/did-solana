@@ -45,7 +45,7 @@
   align-self: center !important;
   justify-self: center !important;
   cursor: pointer;
-  color: #00ffbd;
+  color: #d117e7;
 }
 
 .card {
@@ -69,4 +69,18 @@
 
 .menuText {
   font-family: roboto;
+}
+
+.service {
+  cursor: pointer;
+}
+
+.paper {
+    position: absolute;
+    top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+    width: 400;
+    border: 2px solid #d117e7;
+    align-self: center;
 }
