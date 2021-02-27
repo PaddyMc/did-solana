@@ -13,6 +13,8 @@ import ReactLoading from "react-loading";
 import UserMenu from "./UserMenu";
 import "./Home.css";
 import config from "../config";
+import LaunchIcon from "@material-ui/icons/Launch";
+import { Tooltip } from "@material-ui/core";
 
 const AddAuthentication = () => {
   const [account] = useState(JSON.parse(localStorage.getItem("account")));
@@ -66,7 +68,7 @@ const AddAuthentication = () => {
               >
                 {!!account ? (
                   <Button
-                    className="buttonServicePage"
+                    className="buttonAuthPage"
                     variant="contained"
                     color="secondary"
                     onClick={() => getIdentifier()}
@@ -109,9 +111,20 @@ const AddAuthentication = () => {
                     >
                       Data account (Use this to query data in the Home tab)
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.dataAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.dataAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.dataAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
@@ -119,9 +132,20 @@ const AddAuthentication = () => {
                     >
                       Your account address
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.ownerAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.ownerAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.ownerAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
@@ -129,9 +153,20 @@ const AddAuthentication = () => {
                     >
                       Newly added account address
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.newAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.newAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.newAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                   </CardContent>
                 </Card>
               </Grid>

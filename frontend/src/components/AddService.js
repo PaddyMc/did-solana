@@ -18,6 +18,8 @@ import UserMenu from "./UserMenu";
 import "./AddService.css";
 import ReactLoading from "react-loading";
 import config from "../config";
+import LaunchIcon from "@material-ui/icons/Launch";
+import { Tooltip } from "@material-ui/core";
 
 const AddService = () => {
   const [value] = useState();
@@ -72,79 +74,79 @@ const AddService = () => {
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
             <div className="subtitle">Add a service to your DID</div>
-                {!!account ? (
-	  <Fragment>
-            <Grid container justify="center" spacing={6}>
-              <Grid
-                alignItems="center"
-                align="center"
-                className="textgrid"
-                item
-                xs={8}
-              >
-                <TextField
-                  value={value}
-                  id="standard-id"
-		  className="inputs"
-                  maxWidth="1000px"
-                  label="Please enter an id of the service here..."
-                  color="default"
-                />
-                <FormControl
-		  className="inputs"
-			>
-                  <InputLabel id="label">
-                    Please enter a service type...
-                  </InputLabel>
-                  <Select
-                    labelId="label"
-                    id="select"
-                    value={type}
-                    onChange={handleChange}
+            {!!account ? (
+              <Fragment>
+                <Grid container justify="center" spacing={6}>
+                  <Grid
+                    alignItems="center"
+                    align="center"
+                    className="textgrid"
+                    item
+                    xs={8}
                   >
-                    <MenuItem value={"AMM Licence"}>AMM Licence</MenuItem>
-                    <MenuItem value={"Bridge Licence"}>Bridge Licence</MenuItem>
-                    <MenuItem value={"Generic Licence"}>
-                      Generic Licence
-                    </MenuItem>
-                    <MenuItem value={"DID Document"}>DID Document</MenuItem>
-                  </Select>
-                </FormControl>
-                <TextField
-                  value={value}
-                  id="standard-key"
-		  className="inputs"
-                  maxWidth="1000px"
-                  label="Please enter the data key of the service here (will be used to get data)..."
-                  color="default"
-                />
-                <Grid
-                  item
-                  alignItems="center"
-                  justify="flex-end"
-                  align="center"
-                  className="button"
-                >
-                  <Button
-                    className="buttonServicePage"
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => getIdentifier()}
-                    startIcon={<AddIcon />}
-                  >
-                    Add Service
-                  </Button>
+                    <TextField
+                      value={value}
+                      id="standard-id"
+                      className="inputs"
+                      maxWidth="1000px"
+                      label="Please enter an id of the service here..."
+                      color="default"
+                    />
+                    <FormControl className="inputs">
+                      <InputLabel id="label">
+                        Please enter a service type...
+                      </InputLabel>
+                      <Select
+                        labelId="label"
+                        id="select"
+                        value={type}
+                        onChange={handleChange}
+                      >
+                        <MenuItem value={"AMM Licence"}>AMM Licence</MenuItem>
+                        <MenuItem value={"Bridge Licence"}>
+                          Bridge Licence
+                        </MenuItem>
+                        <MenuItem value={"Generic Licence"}>
+                          Generic Licence
+                        </MenuItem>
+                        <MenuItem value={"DID Document"}>DID Document</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      value={value}
+                      id="standard-key"
+                      className="inputs"
+                      maxWidth="1000px"
+                      label="Please enter the data key of the service here (will be used to get data)..."
+                      color="default"
+                    />
+                    <Grid
+                      item
+                      alignItems="center"
+                      justify="flex-end"
+                      align="center"
+                      className="button"
+                    >
+                      <Button
+                        className="buttonServicePage"
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => getIdentifier()}
+                        startIcon={<AddIcon />}
+                      >
+                        Add Service
+                      </Button>
+                    </Grid>
+                  </Grid>
                 </Grid>
+              </Fragment>
+            ) : (
+              <Grid justify="center" className="flex">
+                <Typography className="title flex" color="textSecondary">
+                  Please create an identifier in the "Create Identifier" tab
+                </Typography>
               </Grid>
-            </Grid>
-	  </Fragment>
-                ) : (
-			<Grid justify="center" className="flex">
-                  <Typography className="title flex" color="textSecondary">
-                    Please create an identifier in the "Create Identifier" tab
-                  </Typography>
-			</Grid>
-                )}
+            )}
             {isLoading && (
               <Grid
                 container
@@ -173,9 +175,20 @@ const AddService = () => {
                     >
                       Data account (Use this to query data in the Home tab)
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.dataAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.dataAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.dataAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
@@ -183,9 +196,20 @@ const AddService = () => {
                     >
                       Your account address
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.ownerAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.ownerAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.ownerAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
@@ -193,9 +217,20 @@ const AddService = () => {
                     >
                       Service Data Key
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.serviceAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.serviceAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.serviceAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                   </CardContent>
                 </Card>
               </Grid>

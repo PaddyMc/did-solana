@@ -154,7 +154,7 @@ const decodeLicense = (buf) => {
     lo.cstr("issuance_date"),
   ]);
   let data = dataLayout.decode(buf);
-	console.log(data)
+  console.log(data);
   return data;
 };
 

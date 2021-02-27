@@ -76,11 +76,24 @@
 }
 
 .paper {
-    position: absolute;
-    top: 50%;
+  position: absolute;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-    width: 400;
-    border: 2px solid #d117e7;
-    align-self: center;
+  width: 500;
+  border: 2px solid #d117e7;
+  align-self: center;
+}
+
+.link {
+  text-decoration: none;
+  cursor: pointer;
+  color: #d117e7;
+}
+.linkgrid {
+  display: flex !important;
+}
+
+.datalinks {
+  display: grid;
 }

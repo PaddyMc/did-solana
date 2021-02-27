@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import styled from "styled-components";
 import TextField from "@material-ui/core/TextField";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
@@ -20,6 +20,8 @@ import ReactLoading from "react-loading";
 import UserMenu from "./UserMenu";
 import HomeIcon from "@material-ui/icons/Home";
 import Modal from "@material-ui/core/Modal";
+import LaunchIcon from "@material-ui/icons/Launch";
+import { Tooltip } from "@material-ui/core";
 
 const Home = () => {
   const [value] = useState();
@@ -48,8 +50,8 @@ const Home = () => {
         let services = decodeServices(identifier.services);
         setServices(services);
         setIsLoading(false);
-	let serviceMap = new Map() 
-         services.forEach(async (service) => {
+        let serviceMap = new Map();
+        services.forEach(async (service) => {
           if (service != "11111111111111111111111111111111") {
             let data = await getServiceData(service);
             serviceMap.set(service, data);
@@ -65,7 +67,7 @@ const Home = () => {
   const handleOpen = (event) => {
     console.log(event.target.innerHTML);
     setServiceDataKey(event.target.innerHTML);
-    console.log(serviceData.get(serviceDataKey))
+    console.log(serviceData.get(serviceDataKey));
     setOpen(true);
   };
 
@@ -75,60 +77,80 @@ const Home = () => {
 
   const body = (
     <Paper className="paper">
-                <Card>
-                  <CardContent>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Service Id
-                    </Typography>
-                    <Typography component="p" gutterBottom>
-                      {serviceData && serviceData.get(serviceDataKey) && serviceData.get(serviceDataKey).id}
-                    </Typography>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Service Type
-                    </Typography>
-                    <Typography component="p" gutterBottom>
-                      {serviceData && serviceData.get(serviceDataKey) && serviceData.get(serviceDataKey).service_type}
-                    </Typography>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Subject of the license
-                    </Typography>
-                    <Typography component="p" gutterBottom>
-                      {serviceData &&serviceData.get(serviceDataKey) && new PublicKey(serviceData.get(serviceDataKey).subject).toString()}
-                    </Typography>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Issuer of the license
-                    </Typography>
-                    <Typography component="p" gutterBottom>
-                      {serviceData &&serviceData.get(serviceDataKey) && new PublicKey(serviceData.get(serviceDataKey).issuer).toString()}
-                    </Typography>
-                    <Typography
-                      className="title"
-                      color="textSecondary"
-                      gutterBottom
-                    >
-                      Date the license was issued
-                    </Typography>
-                    <Typography component="p" gutterBottom>
-                      {serviceData &&serviceData.get(serviceDataKey) && serviceData.get(serviceDataKey).issuance_date}
-                    </Typography>
-                  </CardContent>
-                </Card>
+      <Card>
+        <CardContent>
+          <Typography className="title" color="textSecondary" gutterBottom>
+            Service Id
+          </Typography>
+          <Typography component="p" gutterBottom>
+            {serviceData &&
+              serviceData.get(serviceDataKey) &&
+              serviceData.get(serviceDataKey).id}
+          </Typography>
+          <Typography className="title" color="textSecondary" gutterBottom>
+            Service Type
+          </Typography>
+          <Typography component="p" gutterBottom>
+            {serviceData &&
+              serviceData.get(serviceDataKey) &&
+              serviceData.get(serviceDataKey).service_type}
+          </Typography>
+          <Typography className="title" color="textSecondary" gutterBottom>
+            Subject of the license
+          </Typography>
+          {serviceData && serviceData.get(serviceDataKey) && (
+            <Grid item className="linkgrid" justify="space-between">
+              <Typography component="p" gutterBottom>
+                {new PublicKey(
+                  serviceData.get(serviceDataKey).subject
+                ).toString()}
+              </Typography>
+              <a
+                target="_blank"
+                className="link"
+                href={`http://explorer.solana.com/address/${new PublicKey(
+                  serviceData.get(serviceDataKey).subject
+                ).toString()}?cluster=devnet`}
+              >
+                <Tooltip className="link" title={"View on explorer"}>
+                  <LaunchIcon />
+                </Tooltip>
+              </a>
+            </Grid>
+          )}
+          <Typography className="title" color="textSecondary" gutterBottom>
+            Issuer of the license
+          </Typography>
+          {serviceData && serviceData.get(serviceDataKey) && (
+            <Grid item className="linkgrid" justify="space-between">
+              <Typography component="p" gutterBottom>
+                {new PublicKey(
+                  serviceData.get(serviceDataKey).issuer
+                ).toString()}
+              </Typography>
+              <a
+                target="_blank"
+                className="link"
+                href={`http://explorer.solana.com/address/${new PublicKey(
+                  serviceData.get(serviceDataKey).issuer
+                ).toString()}?cluster=devnet`}
+              >
+                <Tooltip className="link" title={"View on explorer"}>
+                  <LaunchIcon />
+                </Tooltip>
+              </a>
+            </Grid>
+          )}
+          <Typography className="title" color="textSecondary" gutterBottom>
+            Date the license was issued
+          </Typography>
+          <Typography component="p" gutterBottom>
+            {serviceData &&
+              serviceData.get(serviceDataKey) &&
+              serviceData.get(serviceDataKey).issuance_date}
+          </Typography>
+        </CardContent>
+      </Card>
     </Paper>
   );
 
@@ -214,7 +236,12 @@ const Home = () => {
                     >
                       Identifier
                     </Typography>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography
+                      href="www.google.com"
+                      variant="h5"
+                      component="h2"
+                      gutterBottom
+                    >
                       {identifier && identifier.id}
                     </Typography>
                     <Typography
@@ -235,20 +262,41 @@ const Home = () => {
                       Public Keys (base58 encoded)
                     </Typography>
                     {pubkeys &&
-                      values(pubkeys).map((pubkey) => (
-                        <Typography component="p" gutterBottom>
-                          {pubkey.toString("base64") !==
-                            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" &&
-                            new PublicKey(pubkey).toBase58()}
-                        </Typography>
-                      ))}
+                      values(pubkeys).map(
+                        (pubkey) =>
+                          pubkey.toString("base64") !==
+                            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" && (
+                            <Grid
+                              item
+                              className="linkgrid"
+                              justify="space-between"
+                            >
+                              <Typography component="p" gutterBottom>
+                                {new PublicKey(pubkey).toBase58()}
+                              </Typography>
+                              <a
+                                target="_blank"
+                                href={`http://explorer.solana.com/address/${new PublicKey(
+                                  pubkey
+                                ).toBase58()}?cluster=devnet`}
+                              >
+                                <Tooltip
+                                  className="link"
+                                  title={"View on explorer"}
+                                >
+                                  <LaunchIcon />
+                                </Tooltip>
+                              </a>
+                            </Grid>
+                          )
+                      )}
                     <Typography
                       className="title"
                       color="textSecondary"
                       gutterBottom
                     >
-                      Services (resolves data about the did
-                      subject, click the buttons below)
+                      Services (resolves data about the did subject, click the
+                      buttons below)
                     </Typography>
                     {services &&
                       services.map((service) => (

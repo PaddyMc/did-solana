@@ -18,6 +18,8 @@ import UserMenu from "./UserMenu";
 import "./AddService.css";
 import ReactLoading from "react-loading";
 import config from "../config.js";
+import LaunchIcon from "@material-ui/icons/Launch";
+import { Tooltip } from "@material-ui/core";
 
 const CreateService = () => {
   const [value] = useState();
@@ -71,80 +73,79 @@ const CreateService = () => {
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
             <div className="subtitle">Create a new service</div>
-                {!!account ? (
-	  <Fragment>
-            <Grid container justify="center" spacing={6}>
-              <Grid
-                alignItems="center"
-                align="center"
-                className="textgrid"
-                item
-                xs={8}
-              >
-                <TextField
-                  value={value}
-                  id="standard-id"
-		  className="inputs"
-                  maxWidth="1000px"
-                  label="Please enter an id here..."
-                  color="default"
-                />
-                <FormControl
-			
-		  className="inputs"
-			>
-                  <InputLabel id="label">
-                    Please select a service type...
-                  </InputLabel>
-                  <Select
-                    labelId="label"
-                    id="select"
-                    value={type}
-                    onChange={handleChange}
+            {!!account ? (
+              <Fragment>
+                <Grid container justify="center" spacing={6}>
+                  <Grid
+                    alignItems="center"
+                    align="center"
+                    className="textgrid"
+                    item
+                    xs={8}
                   >
-                    <MenuItem value={"AMM License"}>AMM Licence</MenuItem>
-                    <MenuItem value={"Bridge License"}>Bridge Licence</MenuItem>
-                    <MenuItem value={"Generic License"}>
-                      Generic License
-                    </MenuItem>
-                  </Select>
-                </FormControl>
-                <TextField
-                  value={value}
-		  className="inputs"
-                  id="standard-key"
-                  maxWidth="1000px"
-                  label="Please enter the public key or program id of the subject..."
-                  color="default"
-                />
+                    <TextField
+                      value={value}
+                      id="standard-id"
+                      className="inputs"
+                      maxWidth="1000px"
+                      label="Please enter an id here..."
+                      color="default"
+                    />
+                    <FormControl className="inputs">
+                      <InputLabel id="label">
+                        Please select a service type...
+                      </InputLabel>
+                      <Select
+                        labelId="label"
+                        id="select"
+                        value={type}
+                        onChange={handleChange}
+                      >
+                        <MenuItem value={"AMM License"}>AMM Licence</MenuItem>
+                        <MenuItem value={"Bridge License"}>
+                          Bridge Licence
+                        </MenuItem>
+                        <MenuItem value={"Generic License"}>
+                          Generic License
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                    <TextField
+                      value={value}
+                      className="inputs"
+                      id="standard-key"
+                      maxWidth="1000px"
+                      label="Please enter the public key or program id of the subject..."
+                      color="default"
+                    />
+                  </Grid>
+                </Grid>
+                <Grid
+                  item
+                  alignItems="center"
+                  justify="flex-end"
+                  align="center"
+                  className="button"
+                  xs={10}
+                >
+                  <Button
+                    variant="contained"
+                    className="buttonServicePage"
+                    color="secondary"
+                    onClick={() => getIdentifier()}
+                    startIcon={<AddIcon />}
+                  >
+                    Create Service
+                  </Button>
+                </Grid>
+              </Fragment>
+            ) : (
+              <Grid justify="center" className="flex">
+                <Typography className="title flex" color="textSecondary">
+                  Please create an identifier in the "Create Identifier" tab
+                </Typography>
               </Grid>
-            </Grid>
-            <Grid
-              item
-              alignItems="center"
-              justify="flex-end"
-              align="center"
-              className="button"
-              xs={10}
-            >
-              <Button
-                variant="contained"
-                className="buttonServicePage"
-                color="secondary"
-                onClick={() => getIdentifier()}
-                startIcon={<AddIcon />}
-              >
-                Create Service
-              </Button>
-            </Grid>
-	  </Fragment>
-                ) : (
-			<Grid justify="center" className="flex">
-                  <Typography className="title flex" color="textSecondary">
-                    Please create an identifier in the "Create Identifier" tab
-                  </Typography>
-			</Grid>
-                )}
+            )}
             {isLoading && (
               <Grid
                 container
@@ -174,9 +175,20 @@ const CreateService = () => {
                       Data account (Use this to add a service to a DID in the
                       `Add Service` tab)
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.dataAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.dataAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.dataAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
@@ -184,9 +196,20 @@ const CreateService = () => {
                     >
                       Your account address
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.ownerAccount}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.ownerAccount}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.ownerAccount}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
@@ -214,9 +237,20 @@ const CreateService = () => {
                     >
                       Subject of the license
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.subject}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.subject}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.subject}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
@@ -224,9 +258,20 @@ const CreateService = () => {
                     >
                       Issuer of the license
                     </Typography>
-                    <Typography component="p" gutterBottom>
-                      {identifier && identifier.issuer}
-                    </Typography>
+                    <Grid item className="linkgrid" justify="space-between">
+                      <Typography component="p" gutterBottom>
+                        {identifier && identifier.issuer}
+                      </Typography>
+                      <a
+                        target="_blank"
+                        className="link"
+                        href={`http://explorer.solana.com/address/${identifier.issuer}?cluster=devnet`}
+                      >
+                        <Tooltip className="link" title={"View on explorer"}>
+                          <LaunchIcon />
+                        </Tooltip>
+                      </a>
+                    </Grid>
                     <Typography
                       className="title"
                       color="textSecondary"
