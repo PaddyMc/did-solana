@@ -95,5 +95,10 @@
 }
 
 .datalinks {
-  display: grid;
+  display: grid !important;
+}
+
+.headergrid {
+  display: flex !important;
+  margin-bottom: 10px !important;
 }

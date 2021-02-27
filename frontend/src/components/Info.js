@@ -53,13 +53,14 @@ const Info = () => (
               Why DIDs are being used in this project
             </Typography>
             <Typography component="p">
-              DIDs allow users to attach multiple keys and abartary data
-              seructures to an on chain entity they control. This unlocks the
-              ability to identify and license AMMs and Bridges, this allows
+              DIDs allow users to attach multiple keys and arbitrary data
+              structures to an on-chain entity they control. This unlocks the
+              ability to identify and license AMMs and Bridges, which allows
               users of AMMs to have some certainty that the pool is created by a
               respectable authority and their funds will be safe. Bridge
               licenses can allow bridge programs that are stored on-chain to
-              identify themselves.
+              identify themselves. These features only scratch the surface of
+              what can be achieved using DIDs.
             </Typography>
             <br />
             <Typography variant="h6" component="h2">
@@ -88,7 +89,9 @@ const Info = () => (
               </Typography>
               <Typography component="p">
                 Source Code ➡️{" "}
-                <a href="http://github.com/PaddyMc/did-solana">did-solana</a>
+                <a target="_blank" href="http://github.com/PaddyMc/did-solana">
+                  did-solana
+                </a>
               </Typography>
             </Grid>
             <br />
@@ -96,8 +99,8 @@ const Info = () => (
               How to use this application
             </Typography>
             <Typography component="p">
-              This is a test application and all key data is persisted on the
-              Solana development network and keys (public and private) are
+              This is a test application and all essential data is persisted on
+              the Solana development network and keys (public and private) are
               stored in local storage.
             </Typography>
             <br />
@@ -125,15 +128,21 @@ const Info = () => (
               over the person Icon, your address will show up)
             </Typography>
             <Typography component="p">
-              7. Congrats your now the proud owner of a DID 🎉
+              7. Congrats you're now the proud owner of a DID 🎉
             </Typography>
             <br />
             <Typography variant="h6" component="h2">
-              Creating a DID and issuing a licence to the Sereum DEX
+              Creating a DID and issuing a licence to the{" "}
+              <a
+                target="_blank"
+                href="https://github.com/project-serum/serum-dex"
+              >
+                Serum DEX
+              </a>
             </Typography>
             <Typography component="p">
               1. Go to the `Create Identifiers` tab and create an identifier
-              called `Sereum Dex` (this will store your key in local storage)
+              called `Serum Dex` (this will store your key in local storage)
             </Typography>
             <Typography component="p">
               2. Add an public key to your account on the `Add Authentication`
@@ -146,8 +155,8 @@ const Info = () => (
                 3a. Select the `AMM licence` in the service type input field,
               </Typography>
               <Typography component="p">
-                3b. The subject of the licence should be the `Sereum DEX`
-                program address{" "}
+                3b. The subject of the licence should be the `Serum DEX` program
+                address{" "}
                 <a
                   target="_blank"
                   href="https://explorer.solana.com/address/9MVDeYQnJmN2Dt7H44Z8cob4bET2ysdNu2uFJcatDJno?cluster=devnet"
@@ -161,11 +170,11 @@ const Info = () => (
               </Typography>
             </Typography>
             <Typography component="p">
-              4. Add a service to the `Sereum Dex` DID on the `Add Services` tab
+              4. Add a service to the `Serum Dex` DID on the `Add Services` tab
             </Typography>
             <Typography component="p">
-              6. Query the `Sereum Dex` DID on the `Home` tab (Hint: if you
-              hover your mouse over the person Icon, your address will show up)
+              6. Query the `Serum Dex` DID on the `Home` tab (Hint: if you hover
+              your mouse over the person Icon, your address will show up)
             </Typography>
             <Typography component="p">
               7. Congrats you made a DEX on Solana more secure 🎉

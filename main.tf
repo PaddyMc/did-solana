@@ -3,7 +3,7 @@ variable "do_token" {
 }
 
 variable "ssh_key_fingerprint" {
-  default = "6e:36:62:ad:e6:d2:aa:97:cd:de:d1:10:e1:7e:f9:ab"
+  default = ""
 }
 
 provider "digitalocean" {
@@ -17,6 +17,18 @@ resource "digitalocean_droplet" "did"{
   size = "s-4vcpu-8gb"
   ssh_keys = [var.ssh_key_fingerprint]
 
+  provisioner "file" {
+    connection {
+      host	  = digitalocean_droplet.did.ipv4_address
+      type	  = "ssh"
+      user	  = "root"
+      private_key = file("~/.ssh/id_rsa")
+    }
+
+    source      = "./frontend/build"
+    destination = "/root"
+  }
+
   provisioner "remote-exec" {
     connection {
       host	  = digitalocean_droplet.did.ipv4_address
@@ -26,11 +38,11 @@ resource "digitalocean_droplet" "did"{
     }
 
     inline = [
-	"ls",
+       "snap install serve",
     ]
   }
 }
  
-output "sentry1"{
-  value = digitalocean_droplet.sentry_node_1.ipv4_address
+output "didaddr"{
+  value = digitalocean_droplet.did.ipv4_address
 }

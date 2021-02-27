@@ -64,16 +64,18 @@ const AddService = () => {
             <Grid item xs={12}>
               <div className="title">Add Service</div>
             </Grid>
-            {dataAccount && (
-              <Grid item xs={2} justify="center" className="menuGrid">
-                <UserMenu refersh={identifier} />
-              </Grid>
-            )}
           </Grid>
         </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
-            <div className="subtitle">Add a service to your DID</div>
+            <Grid item justify="space-between" className="headergrid">
+              <div className="subtitle">Add a service to your DID</div>
+              {dataAccount && (
+                <Grid item xs={2} justify="center" className="menuGrid">
+                  <UserMenu refersh={identifier} />
+                </Grid>
+              )}
+            </Grid>
             {!!account ? (
               <Fragment>
                 <Grid container justify="center" spacing={6}>
@@ -87,7 +89,7 @@ const AddService = () => {
                     <TextField
                       value={value}
                       id="standard-id"
-                      className="inputs"
+                      className="inputstop"
                       maxWidth="1000px"
                       label="Please enter an id of the service here..."
                       color="default"

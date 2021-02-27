@@ -4,4 +4,9 @@
 /program/identifier/cli/node_modules
 /program/license-service/cli/node_modules
 /frontend/node_modules
+/frontend/build
 *.swp
+terraform.tfstate
+terraform.tfstate.backup
+.terraform.tfstate.lock.info
+.terraform

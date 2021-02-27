@@ -47,16 +47,18 @@ const AddAuthentication = () => {
             <Grid item xs={12}>
               <div className="title">Add Authentication</div>
             </Grid>
-            {dataAccount && (
-              <Grid item xs={2} justify="center" className="menuGrid">
-                <UserMenu refersh={identifier} />
-              </Grid>
-            )}
           </Grid>
         </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
-            <div className="subtitle">Add a public key to your DID</div>
+            <Grid item justify="space-between" className="headergrid">
+              <div className="subtitle">Add a public key to your DID</div>
+              {dataAccount && (
+                <Grid item xs={2} justify="center" className="menuGrid">
+                  <UserMenu refersh={identifier} />
+                </Grid>
+              )}
+            </Grid>
             <Grid justify="center" container spacing={3}>
               <Grid
                 item

@@ -162,18 +162,20 @@ const Home = () => {
             <Grid item xs={12}>
               <div className="title">Home</div>
             </Grid>
-            {dataAccount && (
-              <Grid item xs={2} justify="center" className="menuGrid">
-                <UserMenu refersh={identifier} />
-              </Grid>
-            )}
           </Grid>
         </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
-            <div className="subtitle">
-              Query decentralized identifiers (DIDs)
-            </div>
+            <Grid item justify="space-between" className="headergrid">
+              <div className="subtitle">
+                Query decentralized identifiers (DIDs)
+              </div>
+              {dataAccount && (
+                <Grid item xs={2} justify="center" className="menuGrid">
+                  <UserMenu refersh={identifier} />
+                </Grid>
+              )}
+            </Grid>
             <Grid container spacing={3}>
               <Grid
                 alignItems="center"

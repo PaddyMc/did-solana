@@ -63,16 +63,18 @@ const CreateService = () => {
             <Grid item xs={12}>
               <div className="title">Create Service</div>
             </Grid>
-            {dataAccount && (
-              <Grid item xs={2} justify="center" className="menuGrid">
-                <UserMenu refersh={identifier} />
-              </Grid>
-            )}
           </Grid>
         </Paper>
         <Grid direction="column" spacing={12} justify="space-between">
           <Paper elevation="10" className="spacing card">
-            <div className="subtitle">Create a new service</div>
+            <Grid item justify="space-between" className="headergrid">
+              <div className="subtitle">Create a new service</div>
+              {dataAccount && (
+                <Grid item xs={2} justify="center" className="menuGrid">
+                  <UserMenu refersh={identifier} />
+                </Grid>
+              )}
+            </Grid>
             {!!account ? (
               <Fragment>
                 <Grid container justify="center" spacing={6}>
@@ -86,7 +88,7 @@ const CreateService = () => {
                     <TextField
                       value={value}
                       id="standard-id"
-                      className="inputs"
+                      className="inputstop"
                       maxWidth="1000px"
                       label="Please enter an id here..."
                       color="default"

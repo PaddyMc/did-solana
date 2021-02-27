@@ -34,7 +34,7 @@ The frontend is a basic UI that allows users to create DIDs, compose licences an
 
 - Identifier Program: [FKNARQsQ3wTTadNRcUuQBx9moynv7ctWPP8ni5H4C4HR](https://explorer.solana.com/address/FKNARQsQ3wTTadNRcUuQBx9moynv7ctWPP8ni5H4C4HR?cluster=devnet)
 - License Program: [DTXJtDoZ6X5eb9Ek63B5zK857FmhSYNzHnsiygxhEJJY](https://explorer.solana.com/address/DTXJtDoZ6X5eb9Ek63B5zK857FmhSYNzHnsiygxhEJJY?cluster=devnet)
-- Frontend: [www.did-solana.chain-abstraction.dev](www.did-solana.chain-abstraction.dev)
+- Frontend: <a target="_blank" href="https://did-solana.chain-abstraction.dev">www.did-solana.chain-abstraction.dev:8443</a>
 
 ### For developers to build run the programs
 
@@ -43,6 +43,45 @@ Please refer to the project-specific READMEs
 - [Identifier Program](program/identifier/README.md)
 - [License Program](program/license-service/README.md)
 - [Frontend](frontend/README.md)
+
+### Happy paths through the application
+
+#### Creating a DID and issuing your own licence
+
+1. Go to the `Create Identifiers` tab and create an identifier (this will store your key in local storage)
+
+2. Add an public key to your account on the `Add Authentication` tab
+
+3. Create a service to attach to your identifier on the `Create Services` tab, select `Generic Service`, remember to save the data key
+
+4. Add a service to your DID on the `Add Services` tab
+
+6. Query your DID on the `Home` tab (Hint: if you hover your mouse over the person Icon, your address will show up)
+
+7. Congrats your now the proud owner of a DID 🎉
+
+#### Creating a DID and issuing a licence to the <a target="_blank" href="https://github.com/project-serum/serum-dex">Serum DEX</a>
+
+1. Go to the `Create Identifiers` tab and create an identifier called `Serum Dex` (this will store your key in local storage)
+
+2. Add an public key to your account on the `Add Authentication` tab
+
+3. Create a service to attach to your identifier on the `Create
+Services` tab,
+
+  3a. Select the `AMM licence` in the service type input field,
+
+  3b. The subject of the licence should be the `Serum DEX` program address <a target="_blank" href="https://explorer.solana.com/address/9MVDeYQnJmN2Dt7H44Z8cob4bET2ysdNu2uFJcatDJno?cluster=devnet"> 9MVDeYQnJmN2Dt7H44Z8cob4bET2ysdNu2uFJcatDJno</a>
+
+  3c. Remember to save the data key for use in the `Add Services`
+  tab 
+  
+4. Add a service to the `Serum Dex` DID on the `Add Services` tab
+
+6. Query the `Serum Dex` DID on the `Home` tab (Hint: if you hover your mouse over the person Icon, your address will show up)
+
+7. Congrats you made a DEX on Solana more secure 🎉
+
 
 ### Next steps concerning this project
 
