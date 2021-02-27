@@ -1,6 +1,6 @@
 # Solana did frontend
 
-DIDs are the next big advancement in blockchain technology
+DIDs are the next big advancement in blockchain technology, this frontend is a prototype that allows users to create a DID on the Solana blockchain
 
 ## Available Scripts
 
